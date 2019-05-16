@@ -1,0 +1,434 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <title>The Liverpool Telescope : Telescope + Instruments : Exposure Calculator</title>
+  <body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/css/bootstrap-slider.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+    <center>
+        <div id="curve_chart" style="width: 1000px; height: 600px"></div>
+
+      <!-- .......... INPUT DATA TABLE .......... -->
+      <table>
+        <tr>
+          <td id="pulldn">Instrument: </td>
+          <td>
+            <select name="instrument" id="instrum">
+              <option value="ioo">   IO:O</option>
+              <option value="ioi">   IO:I</option>
+              <option value="rise">  RISE</option>
+              <option value="ringo"> RINGO3</option>
+            </select>
+          </td>
+          <td id="pulldn"> Magnitude:</td>
+          <td>
+            <input id="mag" data-slider-id='ex1Slider' type="text" data-slider-min="10" data-slider-max="23" data-slider-step="0.01" data-slider-value="17" onchange="calcimage();"/>
+            </td>
+          </tr>
+          <tr>
+            <td id="pulldn">Binning: </td>
+            <td>
+              <select name="binning" id="binn">
+                <option value="two"> 2x2               </option>
+                <option value="one"> 1x1               </option>
+                <option value="rgbin"> RINGO3 (unbinned) </option>
+              </select>
+            </td>
+            <td id="pulldn"> SNR: </td>
+            <td>
+              <input id="snr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+              </td>
+            </tr>
+            <tr>
+              <td id="pulldn">Filter: </td>
+              <td>
+                <select name="filter" id="filt">
+                  <option value="fsu">  SDSS-U (AB system)     </option>
+                  <option value="fbb">  Bessell-B (Vega) </option>
+                  <option value="fbv">  Bessell-V (Vega) </option>
+                  <option value="fsg">  SDSS-G (AB system)    </option>
+                  <option value="fsr">  SDSS-R (AB system)    </option>
+                  <option value="fsi">  SDSS-I (AB system)    </option>
+                  <option value="fsz">  SDSS-Z (AB system)    </option>
+                  <!--<option value="fjj">  J (IO:I)   </option>-->
+                  <option value="fhh">  H (Vega)   </option>
+                  <option value="frise"> RISE V+R   </option>
+                  <option value="frise720"> RISE 720nm </option>
+                  <option value="fringr">  RINGO3 Red 'd'  </option>
+                  <option value="fringg">  RINGO3 Green 'f'  </option>
+                  <option value="fringb">  RINGO3 Blue 'e'  </option>
+                </select>
+              </td>
+              <td>Sky Brightness: </td>
+              <td>
+                <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.05" data-slider-value="4" onchange="calcimage();"/>
+              </td>
+            </tr>
+          </table>
+
+          <p id="tabcaption">Note: the exposure times quoted above are in SECONDS;
+saturation or an exposure time longer than 3 hours are not displayed.</p>
+    </center>
+    <!-- ......................................................................... -->
+    <!-- ... The rest of this file is JavaScript code within the <script> tags ... -->
+    <!-- ......................................................................... -->
+
+    <script>
+      /*
+       * This script defines the calculate() function called by the event handlers
+       * in HTML above. The function reads values from
+                      <input> elements or
+                        <select>
+       * pull-down options, calculates exposure times, then displays the results
+       * in
+                          <span> elements.
+       */
+
+      // TIP: variables declared as "var" are Global variables. However,
+      //      variables declared inside a function as "var" are local to the function.
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(calcimage);
+
+      var slider1 = new Slider("#sky", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      var slider2 = new Slider("#mag", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      var slider3 = new Slider("#snr", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      function calcimage() {
+          var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+          // Look up (Define?) the input elements in the document for IMAGING
+          var instrum = document.getElementById("instrum").value;
+          var binn = document.getElementById("binn").value;
+          var filt = document.getElementById("filt").value;
+          var snr = +document.getElementById("snr").value;
+          var mag = +document.getElementById("mag").value;
+          var sky = +document.getElementById("sky").value;
+
+          // FIRST PULL-DOWN ***
+          // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
+          if (instrum == "ioo")         {
+            var pixscale = 0.15;
+            var darkcurrent = 0;
+            var readnoise = 10;
+          } else if (instrum == "ioi")  {
+            var pixscale = 0.18;
+            var darkcurrent = 0;
+            var readnoise = 17;
+          } else if (instrum == "rise") {
+            var pixscale = 0.54;
+            var darkcurrent = 0;
+            var readnoise = 10;
+          } else                       { // ringo3
+            var pixscale = 0.48;
+            var darkcurrent = 0;
+            var readnoise = 17;  // Updated by IAS via NRC October 2015
+          };
+
+          // SECOND PULL-DOWN ***
+          // Look-up tables of variables -BINNING
+          if (binn == "two") {
+            var bin = 2;
+          } else            {
+            var bin = 1;
+          };
+
+          // THIRD PULL-DOWN ***
+          // Look-up tables of variables - ZERO POINTS & SKY (inst and filter specific)
+          // NB. ZPs should correspond to 1 electron/second (i.e. corrected for GAIN)
+          // The RINGO3 values assume GAIN = 1, and therefore become increasingly
+          // inaccurate at exposure times >3 sec.
+          // For skybrightness data see:
+          //     http://www.ing.iac.es/Astronomy/observing/conditions/skybr/skybr.html
+          // ...
+          if (filt == "fsu") {            // IO:O sdss_u
+            var zp = 22.17;               // 21.30 from old ETC, modified by CMC in Jan 2016 using Helen Jermak's post-recoating factors (29 June 2015 email)
+            var skybr = 21.0;             // Skybr values are similar to ING
+            var skyoff = 1.5;             //   measurements on their web-site
+          } else if (filt == "fbb") {     // IO:O bessell_b
+            var zp = 24.90;         // 24.10 from old ETC, modified with HJ's factor
+            var skybr = 22.3;
+            var skyoff = 1.5;
+          } else if (filt == "fbv") {     // IO:O bessell_v
+            var zp = 24.96;         // 24.20 from old ETC, modified with HJ's factor
+            var skybr = 21.4;
+            var skyoff = 1.5;
+          } else if (filt == "fsg") {     // IO:O sdss_g
+            var zp = 25.14;         // 24.40 from old ETC, modified with HJ's factor
+            var skybr = 21.7;
+            var skyoff = 1.0;
+          } else if (filt == "fsr") {     // IO:O sdss_r
+            var zp = 25.39;         // 24.60 from old ETC, modified with HJ's factor
+            var skybr = 20.4;
+            var skyoff = 1.0;
+          } else if (filt == "fsi") {     // IO:O sdss_i
+            var zp = 25.06;         // 24.40 from old ETC, modified with HJ's factor
+            var skybr = 19.3;
+            var skyoff = 1.0;
+          } else if (filt == "fsz") {     // IO:O sdss_z
+            var zp = 24.52;         // 24.0 from old ETC, modified with HJ's factor
+            var skybr = 18.3;
+            var skyoff = 0.5;
+
+          } else if (filt == "fjj") {      // IO:I J-band
+            var zp = 24.50;     // 24.0 from IO:I webpage (pre-commissioning, so RMB estimate?). In Jan 2016 CMC added 0.5 after 2015 recoating.
+            var skybr = 16.6;   // from ING sky brightness page, in mag per sqr arcsec
+            var skyoff = 0.0;   // skyoff assumes moon has no affect on J-band sky
+          } else if (filt == "fhh") {      // IO:I H-band
+            var zp = 24.00;     // 23.5 updated after commissioning; corrected for gain (CJD). CMC added 0.5 after 2015 recoating.
+            var skybr = 12.5;   // from ING sky brightness page, in mag per sqr arcsec
+            var skyoff = 0.0;   // skyoff assumes moon has no affect on H-band sky
+
+          } else if (filt == "frise")  {   // rise  V+R
+            var zp = 25.20;     // In Jan 2016 CMC added 0.7 to original value of 24.50 following 2015 recoating
+            var skybr = 20.4;   // ... same as sdss-r above
+            var skyoff = 1.0;   // ... same as sdss-r above
+
+          } else if (filt == "frise720")  {   // rise 720
+            var zp = 23.40;     //
+            var skybr = 19.3;   // ... same as sdss-i above
+            var skyoff = 1.0;   // ... same as sdss-i above
+
+          } else if (filt == "fringr") {   // ringo3 (red 'd')   - assume like I
+            var zp = 21;         // Updated by IAS via NRC October 2015
+            var skybr = 19.3;    // ... same as sdss-i above
+            var skyoff = 1.0;    // ... same as sdss-i above
+          } else if (filt == "fringg") {   // ringo3 (green 'f') - assume like R
+            var zp = 21.8;       // Updated by IAS via NRC October 2015
+            var skybr = 20.4;    // ... same as sdss-r above
+            var skyoff = 1.0;    // ... same as sdss-r above
+          } else                       {   // ringo3 (blue 'e')  - assume like B
+            var zp = 23;         // Updated by IAS via NRC October 2015
+            var skybr = 22.3;    // ... same as bessel B above
+            var skyoff = 1.5;    // ... same as bessel B above
+          };
+
+          // *************************************************************************
+
+          // ****
+          // **** Check the select-option combinations are valid
+          // ****
+
+          //IO:O
+          if (instrum == "ioo" && binn == "rgbin") {
+              alert("Incorrect Instrument-Binning Combination!");
+          }
+          if (instrum == "ioo" && filt == "fjj") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioo" && filt == "fhh") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioo" && (filt == "frise" || filt == "frise720") ) {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioo" && filt == "fringr") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioo" && filt == "fringg") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioo" && filt == "fringb") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+
+          //IO:I
+          if (instrum == "ioi" && binn == "rgbin") {
+              alert("Incorrect Instrument-Binning Combination!");
+          }
+          if (instrum == "ioi" && filt == "fsu") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fbb") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fbv") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fsg") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fsr") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fsi") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fsz") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && (filt == "frise" || filt == "frise720") ) {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fringr") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fringg") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ioi" && filt == "fringb") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+
+         //RISE
+          if (instrum == "rise" && binn == "rgbin") {
+              alert("Incorrect Instrument-Binning Combination!");
+          }
+          if (instrum == "rise"){
+              if ( !(filt == "frise" || filt == "frise720") ) {
+                  alert("Incorrect Instrument-Filter Combination!");
+              }
+          }
+
+         //RINGO3
+          if (instrum == "ringo" && binn == "one") {
+              alert("Incorrect Instrument-Binning Combination!");
+          }
+          if (instrum == "ringo" && binn == "two") {
+              alert("Incorrect Instrument-Binning Combination!");
+          }
+          if (instrum == "ringo" && filt == "fsu") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fbb") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fbv") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fsg") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fsr") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fsi") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fsz") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fjj") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && filt == "fhh") {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+          if (instrum == "ringo" && (filt == "frise" || filt == "frise720") ) {
+              alert("Incorrect Instrument-Filter Combination!");
+          }
+
+          // Could display in table the ZP to be used - commented out below
+          // document.getElementById("zpused").innerHTML = zp.toFixed(2);
+
+          // *************************************************************************
+
+          // ****
+          // **** SETUP OUTPUT VALUES
+          // ****
+
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'Seeing Value');
+          const aperSizes = [2.0, 2.5, 3.0, 4.0];
+          aperSizes.forEach(function(aper){
+             data.addColumn('number', aper.toFixed(1) + 'm Aperture');
+          });
+
+          //}
+
+          // ****
+          // **** MAIN CALCULATION (Imaging)
+          // ****
+
+          // POINT sources
+          // Calculate exposure times based on a range of seeing and sky brightness
+          // values.
+          // Step through seeing and sky brightness (nested for loops).
+          //    - seeing is 1.0 when i=1; step by 0.5 arcsec so seeing is 4.0 when i=7
+          //    - sky bright is Dark when j=0; step by 1 mag so sky is dark+10 when j=10
+          // Output values stored in a 1-D variable (2D a pain to code)
+
+          var snr2 = snr * snr
+          var see = 0.5;  // base seeing
+
+          // i - seeing
+          for (var i = 0; i <= 45; i++) {
+            var seeing = see + (i / 10);            // stepping through seeing (in arcsec)
+            var skymag = skybr - (skyoff * sky) ;   // stepping through sky brightnesses (in mags)
+                                                    //  - skyoff takes into account 1 mag change in
+                                                    //    V doesn't equal 1 mag change in u or r.
+                            //
+            var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
+            var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
+            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                //  - must multiply by areaofdisk since skymag
+                                                                //    in mag/arcsec2
+            var a = expt * expt;
+            var b = -snr * snr * expt;
+            var c = -snr * snr * ((skyphotons * expt * areaofdisk) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
+            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
+            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
+            var starphotons = Math.max(starphotonsa, starphotonsb);
+            var dataLine = [seeing]
+
+            aperSizes.forEach(function(aper){
+               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))
+               limMag = -2.5 * Math.log10(starphotons) + instZp;
+              dataLine.push(limMag);
+           });
+
+
+
+
+            data.addRow(dataLine);
+
+          }
+
+          // *************************************************************************
+
+          var options = {
+            title: 'Exposure Time Calculator',
+            curveType: 'function',
+            legend: { position: 'right' },
+            hAxis: {
+              title: "Seeing / arcsec",
+              viewWindow: {
+                min: 0.5,
+                max: 5
+              }
+            },
+            vAxis: {
+              title: "Exposure Time / seconds",
+              viewWindow: {
+                min: 0,
+                max: 18000
+              }
+            }
+          };
+
+          chart.draw(data, options);
+      }
+
+    </script>
+  </body>
+</html>

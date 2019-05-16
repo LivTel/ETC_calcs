@@ -128,9 +128,9 @@ A field of Aperture has been added, to compare exposure times for different mirr
            <option value="ringo"> RINGO3</option>
         </select>
       </td>
-      <td id="pulldn">Exp Time(s):</td>
+      <td id="pulldn"> Magnitude:</td>
       <td>
-        <input id="expt">
+        <input id="mag">
       </td>
   </tr>
   <tr>
@@ -142,9 +142,9 @@ A field of Aperture has been added, to compare exposure times for different mirr
            <option value="rgbin"> RINGO3 (unbinned) </option>
         </select>
      </td>
-     <td id="pulldn">Sky mag:</td>
+     <td id="pulldn"> SNR: </td>
      <td>
-        <input id="skymag">
+        <input id="snr">
      </td>
   </tr>
   <tr>
@@ -171,20 +171,7 @@ A field of Aperture has been added, to compare exposure times for different mirr
      <td>
         <input id="aper">
      </td>
-   </tr>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td id="pulldn">SNR:</td>
-      <td>
-         <input id="snr">
-      </td>
-
-   </tr>
-
-
-
+  </tr>
   <tr>
      <td></td>
      <td>
@@ -493,8 +480,7 @@ function calcimage() {
     var binn = document.getElementById("binn").value;
     var filt = document.getElementById("filt").value;
     var snr = document.getElementById("snr").value;
-    var expt = document.getElementById("expt").value;
-    var skymag = document.getElementById("skymag").value;
+    var mag = document.getElementById("mag").value;
     var aper = document.getElementById("aper").value;
 
     // FIRST PULL-DOWN ***
@@ -734,11 +720,11 @@ function calcimage() {
     var cell = 1;   // simple counter
     var see = 0.5;  // base seeing
     var texp = [];  // sets up texp as an ARRAY
-    // for (var j = 0; j <= 10; j++) {
-        //for (var i = 1; i <= 7; i++) {
+    for (var j = 0; j <= 10; j++) {
+        for (var i = 1; i <= 7; i++) {
 
-         //   var seeing = see + (i / 2) ;            // stepping through seeing (in arcsec)
-         //   var skymag = skybr - (skymag * j) ;     // stepping through sky brightnesses (in mags)
+            var seeing = see + (i / 2) ;            // stepping through seeing (in arcsec)
+            var skymag = skybr - (skyoff * j) ;     // stepping through sky brightnesses (in mags)
                                                     //  - skyoff takes into account 1 mag change in
                                                     //    V doesn't equal 1 mag change in u or r.
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
@@ -747,9 +733,9 @@ function calcimage() {
             var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
                                                     //  - must multiply by areaofdisk since skymag
                                                     //    in mag/arcsec2
-            var a = expt * expt;
-            var b = -snr * snr * expt;
-            var c = -snr * snr * ((skyphotons * expt * areaofdisc) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise));
+            var a = starphotons * starphotons;
+            var b = -snr * snr * (starphotons + skyphotons + darkcurrent);
+            var c = -snr * snr * numberofpixels * readnoise * readnoise;
             var texpaa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
             var texpbb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
             texp[cell] = Math.max(texpaa,texpbb);                 // select greater value
@@ -767,8 +753,8 @@ function calcimage() {
             }
 
             cell++ ; // increment counter used to define the output variables
-      //  }
-   // }
+        }
+    }
 
     // EXTENDED sources
     // SAME CALCULATION (but for extended sources)
@@ -1085,5 +1071,116 @@ function calcspec() {
 
 </script>
 
+</body>
+</html>
+        </div> <!-- end content -->
+      </div> <!-- end inner -->
+
+
+      <div id="navbar">
+        <!-- SEARCH BOX -->
+<div id="ct_search">
+  <form action="https://telescope.livjm.ac.uk/searchresults.php" id="cse-search-box">
+  <div id="ct_search_inner">
+    <input type="hidden" name="cx" value="005805400974876839243:wr_x9h8p6co" />
+    <input type="hidden" name="cof" value="FORID:11" />
+    <input type="hidden" name="ie" value="UTF-8" />
+    <input type="text" name="q" size="12" id="ct_search_text" />
+    <input type="image" class="button" id="ct_search_button" src="https://telescope.livjm.ac.uk/pics/go2.png" height="20" width="20" alt="Search" title="Search LT site" />
+  </div>
+  </form>
+  <script type="text/javascript" src="https://www.google.com/coop/cse/brand?form=cse-search-box&lang=en"></script>
+</div>
+
+<!--
+<div style="margin-top: 10px;">
+<a href="http://www.robotictelescope.org/">
+  <img src="https://telescope.livjm.ac.uk/pics/menu_nrt.png"
+    alt="New Robotic Telescope" width="144px" style="border:0px"/>
+</a>
+</div>
+-->
+
+<!-- PHASE2UI LINK -->
+<!-- Button generated by www.cooltext.com -->
+<div style="margin-top: 10px;">
+<a href="https://telescope.livjm.ac.uk/PropInst/Phase2/">
+  <img src="https://telescope.livjm.ac.uk/pics/cooltext461081671.png"
+    onmouseover="this.src='https://telescope.livjm.ac.uk/pics/cooltext461081671MouseOver.png';"
+    onmouseout="this.src='https://telescope.livjm.ac.uk/pics/cooltext461081671.png';"
+    alt="Use phase2UI" style="border:0px"/>
+</a>
+</div>
+
+<!-- NAVIGATION MENU -->
+<div id="ct-menu" style="margin-top: 5px;">
+      <ul>
+<li><a href="https://telescope.livjm.ac.uk/" class="home">Home</a></li>
+<li><a href="../../About/" class="about">About</a></li>
+<li><a href="../../News/" class="news">News</a></li>
+<li><a href="../../Reports/" class="reports">Night Reports</a></li>
+<li><a href="../../Live/" class="live">Live Status</a></li>
+<li><a href="../../TelInst/" class="telinst">Telescope &amp; Instruments</a>
+<ul>
+<li><a href="../../TelInst/Spec/" class="spec">Telescope Specification</a></li>
+<li><a href="../../TelInst/Robotic/" class="robot">Robotic Systems</a></li>
+<li><a href="../../TelInst/Targeting/" class="target">Target Acquisition</a></li>
+<li><a href="../../TelInst/Inst/" class="inst">Instruments</a></li>
+<li><a href="../../TelInst/calc/" class="calc">Exposure Calculator</a></li>
+<li><a href="../../TelInst/Standards/" class="stds">Regular Standards</a></li>
+<li><a href="../../TelInst/Pipelines/" class="pipes">Reduction Pipelines</a></li>
+<li style="line-height: 0;">&nbsp;</li>
+</ul>
+</li>
+<li><a href="../../PropInst/" class="prop">Proposal Instructions</a>
+<ul>
+<li><a href="../../PropInst/Call/" class="call">Call for Proposals</a></li>
+<li><a href="../../PropInst/Phase1/" class="phase1">Phase 1</a></li>
+<li><a href="../../PropInst/Phase2" class="phase2">Phase 2</a></li>
+<li><a href="../../PropInst/RTML" class="rtml">RTML</a></li>
+<li><a href="../../PropInst/Reactive" class="react">Reactive Time</a></li>
+<li><a href="../../PropInst/PriorityZ" class="prtz">Priority Z Time</a></li>
+<li><a href="../../PropInst/Opticon" class="opti">OPTICON</a></li>
+<li><a href="../../PropInst/Alloc/" class="alloc">Time Allocations</a></li>
+<li style="line-height: 0;">&nbsp;</li>
+</ul>
+</li>
+<li><a href="../../PropSubs/" class="propsubs">Proposal Submission</a></li>
+<li><a href="../../DataProd/" class="dataprod">Data Products</a>
+<ul>
+<li><a href="https://telescope.livjm.ac.uk/cgi-bin/lt_search">Data Archive</a></li>
+<li><a href="../../DataProd/RecentData/" class="recentdata">Recent Data</a></li>
+<li><a href="../../DataProd/quicklook/" class="quicklook">Quicklook</a></li>
+<li><a href="https://telescope.livjm.ac.uk/SkyCam/skycam_search.html">Skycam Archive</a></li>
+<li style="line-height: 0;">&nbsp;</li>
+</ul>
+</li>
+<li><a href="http://www.schoolsobservatory.org.uk/">National Schools' Observatory</a></li>
+<li><a href="../../Pubs/" class="pubs">Publications</a></li>
+
+<li><a href="../../Gallery/" class="gal">Picture Gallery</a></li>
+<li><a href="../../Ack/" class="ack">Acknowledgements</a></li>
+<li><a href="../../Contact/" class="cont">Contact</a></li>
+<li><a href="../../Privacy/" class="priv">Privacy Policy</a></li>
+<li><a href="../../Oversight/" class="ovst">Oversight</a></li>
+<li><a href="https://www.robotictelescope.org/" class="noHoverHighlight"><div class="imgButton" style="background-image:url('/pics/menu_nrt2.png')">New Robotic<br>Telescope</div></a></li>
+</ul>
+</div>
+      </div> <!-- end navbar -->
+
+    </div> <!-- end main -->
+
+
+    <div id="footer">
+      <p style="text-indent: 150px;">Copyright &copy; 2004-2019 <a href="http://www.astro.ljmu.ac.uk/">Astrophysics Research Institute</a>, <a href="http://www.ljmu.ac.uk/">Liverpool John Moores University</a>, UK</p>
+    </div> <!-- end footer -->
+
+  </div> <!-- end wrapper -->
+
+
+  <!--Start Cookie Script-->
+  <!-- <script type="text/javascript" charset="UTF-8" src="http://chs03.cookie-script.com/s/d158c6384addf1a155caa67aadba35de.js"></script> -->
+  <!-- <script type="text/javascript" charset="UTF-8" src="/js/d158c6384addf1a155caa67aadba35de.js"></script> -->
+  <!--End Cookie Script-->
 </body>
 </html>
