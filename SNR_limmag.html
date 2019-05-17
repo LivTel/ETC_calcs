@@ -1,6 +1,6 @@
 <script>
 
-   // Test
+   // Test for mathematics to solve SNR for limiting magnitudes
 
 
     // Test input values
@@ -21,7 +21,7 @@
 
 
 
-    zp += -2.5*Math.log10((2*2)/(aper*aper))
+   zp += -2.5*Math.log10((2*2)/(aper*aper))
 
 	var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
 	var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels

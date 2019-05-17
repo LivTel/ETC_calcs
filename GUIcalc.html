@@ -1,7 +1,28 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+
+LOG of changes and updates:
+
+  - Version 1.0 (30 Apr 2018): Cloned the ExpTime calculator V1.4 and modified for different collecting areas for NRT
+  - Version 2.0 (17 May 2018): DMA used Marco Lam's graphical google chart work and modified to solve for Limiting Magnitude
+
+Previous versions of the Exposure time calulutaor on which this was built were;
+        - Version 1.0 (19 Jun 2014): original code with guestimates for SPRAT, RISE and IO:I
+        - Version 1.1 ( 4 Jul 2014): reduced size of tables and tweaked text (CJD)
+        - Version 1.2 (20 Nov 2014): tweaked text (CJD)
+        - Version 1.3 (24 Apr 2015): Update IO:I H-band zeropoint (CJD)
+        - Version 1.4 (01 Oct 2015): Update to RINGO3 Zeropoint and Readnoise values (IAS via NRC)
+
+** Make sure you update the version number (will be displayed) at the end of this doc **
+
+-->
+
+
+
+
 <html>
-  <title>The Liverpool Telescope : Telescope + Instruments : Exposure Calculator</title>
+  <title>The Liverpool Telescope Instruments : Limiting magnitude calculator for different telesope apertures</title>
   <body>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -19,22 +40,22 @@
         <tr>
           <td id="pulldn">Instrument: </td>
           <td>
-            <select name="instrument" id="instrum">
+            <select name="instrument" id="instrum" onchange="calcimage();">
               <option value="ioo">   IO:O</option>
               <option value="ioi">   IO:I</option>
               <option value="rise">  RISE</option>
               <option value="ringo"> RINGO3</option>
             </select>
           </td>
-          <td id="pulldn"> Magnitude:</td>
+          <td id="pulldn"> Exposure Time (s):</td>
           <td>
-            <input id="mag" data-slider-id='ex1Slider' type="text" data-slider-min="10" data-slider-max="23" data-slider-step="0.01" data-slider-value="17" onchange="calcimage();"/>
+            <input id="expt" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="1200" data-slider-step="30" data-slider-value="300" onchange="calcimage();"/>
             </td>
           </tr>
           <tr>
             <td id="pulldn">Binning: </td>
             <td>
-              <select name="binning" id="binn">
+              <select name="binning" id="binn" onchange="calcimage();">
                 <option value="two"> 2x2               </option>
                 <option value="one"> 1x1               </option>
                 <option value="rgbin"> RINGO3 (unbinned) </option>
@@ -48,7 +69,7 @@
             <tr>
               <td id="pulldn">Filter: </td>
               <td>
-                <select name="filter" id="filt">
+                <select name="filter" id="filt" onchange="calcimage();">
                   <option value="fsu">  SDSS-U (AB system)     </option>
                   <option value="fbb">  Bessell-B (Vega) </option>
                   <option value="fbv">  Bessell-V (Vega) </option>
@@ -70,10 +91,24 @@
                 <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.05" data-slider-value="4" onchange="calcimage();"/>
               </td>
             </tr>
-          </table>
+            <tr>
+               <td></td>
+               <td></td>
+               <td id="pulldn">Apertures (m):</td>
+               <td>
+                  <input id="apers" value="2.0,3.5,4.2" onchange="calcimage();">
+               </td>
 
-          <p id="tabcaption">Note: the exposure times quoted above are in SECONDS;
-saturation or an exposure time longer than 3 hours are not displayed.</p>
+
+
+
+         </table>
+         <br>
+         <p> Enter a comma seperated list of the telescope apertures (in metres) into the Apertures box</p>
+          <p style="width:600px"> NOTE: The calculation assumes that the collecting area of the telescope scales as the square of the aperture (i.e. that the ratio of primary mirror diameter to secondary mirror obscuration diameter is fixed). Further the pixel scale of an LT instrument on a larger telescope is assumed to be the same.</p>
+
+
+         <p>  <i>(Version 2.0 - May 2019, Marco Lam and Doug Arnold)</i> </p>
     </center>
     <!-- ......................................................................... -->
     <!-- ... The rest of this file is JavaScript code within the <script> tags ... -->
@@ -102,7 +137,7 @@ saturation or an exposure time longer than 3 hours are not displayed.</p>
           }
       });
 
-      var slider2 = new Slider("#mag", {
+      var slider2 = new Slider("#expt", {
         formatter: function(value) {
             return value;
           }
@@ -122,8 +157,10 @@ saturation or an exposure time longer than 3 hours are not displayed.</p>
           var binn = document.getElementById("binn").value;
           var filt = document.getElementById("filt").value;
           var snr = +document.getElementById("snr").value;
-          var mag = +document.getElementById("mag").value;
+          var expt = +document.getElementById("expt").value;
           var sky = +document.getElementById("sky").value;
+          var apers = document.getElementById("apers").value;
+
 
           // FIRST PULL-DOWN ***
           // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
@@ -349,7 +386,8 @@ saturation or an exposure time longer than 3 hours are not displayed.</p>
 
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Seeing Value');
-          const aperSizes = [2.0, 2.5, 3.0, 4.0];
+          const aperSizes = apers.split(",").map(Number)//[2, 2.5, 3.0, 4.0];
+          //document.write(aperSizes[0])
           aperSizes.forEach(function(aper){
              data.addColumn('number', aper.toFixed(1) + 'm Aperture');
           });
@@ -361,44 +399,38 @@ saturation or an exposure time longer than 3 hours are not displayed.</p>
           // ****
 
           // POINT sources
-          // Calculate exposure times based on a range of seeing and sky brightness
-          // values.
-          // Step through seeing and sky brightness (nested for loops).
-          //    - seeing is 1.0 when i=1; step by 0.5 arcsec so seeing is 4.0 when i=7
-          //    - sky bright is Dark when j=0; step by 1 mag so sky is dark+10 when j=10
+          // Calculate the number of counts per second from a source for the LT, across a range of seeing values,
+          // and calculate the limiting magnitude based on a ZP change for different telescop e appertures.
+          // Step through seeing (nested loop)
+          //    - seeing is 0.5 when i=0; step by 0.1 arcsec so seeing is 3.0 when i=25
           // Output values stored in a 1-D variable (2D a pain to code)
 
-          var snr2 = snr * snr
+          var skymag = skybr - (skyoff * sky) ;  // calculate the skymag
+                                                 // skyoff takes into account 1 mag change in
+                                                 // V doesn't equal 1 mag change in u or r.
           var see = 0.5;  // base seeing
 
-          // i - seeing
-          for (var i = 0; i <= 45; i++) {
-            var seeing = see + (i / 10);            // stepping through seeing (in arcsec)
-            var skymag = skybr - (skyoff * sky) ;   // stepping through sky brightnesses (in mags)
-                                                    //  - skyoff takes into account 1 mag change in
-                                                    //    V doesn't equal 1 mag change in u or r.
-                            //
+          for (var i = 0; i <= 25; i++) {
+            var seeing = see + (i / 10);                                         // stepping through seeing (in arcsec)
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
             var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
             var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                //  - must multiply by areaofdisk since skymag
-                                                                //    in mag/arcsec2
+                                                                                 //  - must multiply by areaofdisk since skymag
+                                                                                 //    in mag/arcsec2
             var a = expt * expt;
             var b = -snr * snr * expt;
             var c = -snr * snr * ((skyphotons * expt * areaofdisk) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
             var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
             var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
-            var starphotons = Math.max(starphotonsa, starphotonsb);
-            var dataLine = [seeing]
+            var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
 
-            aperSizes.forEach(function(aper){
-               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))
-               limMag = -2.5 * Math.log10(starphotons) + instZp;
-              dataLine.push(limMag);
+            var dataLine = [seeing]                                     // Create the list for the dataline with seeing value
+
+            aperSizes.forEach(function(aper){                           // For each aperture size
+               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+               limMag = -2.5 * Math.log10(starphotons) + instZp;        // Calculate the limiting magnitude
+              dataLine.push(limMag);                                    // Add to list
            });
-
-
-
 
             data.addRow(dataLine);
 
@@ -407,21 +439,21 @@ saturation or an exposure time longer than 3 hours are not displayed.</p>
           // *************************************************************************
 
           var options = {
-            title: 'Exposure Time Calculator',
+            title: 'Limiting Magnitude Calculator',
             curveType: 'function',
             legend: { position: 'right' },
             hAxis: {
               title: "Seeing / arcsec",
               viewWindow: {
                 min: 0.5,
-                max: 5
+                max: 3
               }
             },
             vAxis: {
-              title: "Exposure Time / seconds",
+              title: "Limiting Magnitude",
               viewWindow: {
-                min: 0,
-                max: 18000
+                min: 14,
+                max: 24,
               }
             }
           };
