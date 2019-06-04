@@ -143,7 +143,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
               <td id="pulldn">Slit: </td>
               <td>
-                 <select name="slitwidth" id="spslit">
+                 <select name="slitwidth" id="spslit" onchange="calcspec();">
                     <option value="ifu">  IFU fibre bundle  </option>
                     <option value="spratslit"> SPRAT 2 arcsec slit </option>
                  </select>
@@ -156,7 +156,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
               <td id="pulldn">Spectrometer arm: </td>
               <td>
-                 <select name="specarm" id="sparm">
+                 <select name="specarm" id="sparm" onchange="calcspec();">
                     <option value="frredarmv"> FRODOspec Red arm (VPH)  </option>
                     <option value="frbluarmv"> FRODOspec Blue arm (VPH) </option>
                     <option value="frredarm">  FRODOspec Red arm (low res)  </option>
@@ -537,7 +537,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // *************************************************************************
 
           var options = {
-            title: 'Limiting Magnitude Calculator',
+            title: 'Limiting Magnitude Calculator - Imaging',
             curveType: 'function',
             legend: { position: 'right' },
             hAxis: {
@@ -740,7 +740,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             }
 
             var spoptions = {
-              title: 'Limiting Magnitude Calculator Spectroscopy',
+              title: 'Limiting Magnitude Calculator - Spectroscopy',
               curveType: 'function',
               legend: { position: 'right' },
               hAxis: {
@@ -753,8 +753,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               vAxis: {
                 title: "Limiting Magnitude",
                 viewWindow: {
-                  min: 14,
-                  max: 24,
+                  min: 8,
+                  max: 20,
                 }
               }
             };
