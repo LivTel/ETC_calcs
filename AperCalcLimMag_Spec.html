@@ -103,7 +103,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness: </td>
               <td>
-                <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.05" data-slider-value="4" onchange="calcimage();"/>
+                <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
             <tr>
@@ -141,6 +141,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                </td>
            </tr>
            <tr>
+
               <td id="pulldn">Slit: </td>
               <td>
                  <select name="slitwidth" id="spslit" onchange="calcspec();">
@@ -167,7 +168,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness: </td>
               <td>
-                <input id="spsky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.05" data-slider-value="4" onchange="calcspec();"/>
+                <input id="spsky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
               </td>
             </tr>
             <tr>
@@ -510,24 +511,28 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           for (var i = 0; i <= 25; i++) {
             var seeing = see + (i / 10);                                         // stepping through seeing (in arcsec)
+            var dataLine = [seeing]
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
             var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
-            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                                 //  - must multiply by areaofdisk since skymag
-                                                                                 //    in mag/arcsec2
-            var a = expt * expt;
-            var b = -snr * snr * expt;
-            var c = -snr * snr * ((skyphotons * expt * areaofdisk) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
-            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
-            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
-            var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
 
-            var dataLine = [seeing]                                     // Create the list for the dataline with seeing value
 
             aperSizes.forEach(function(aper){                           // For each aperture size
-               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))
+               var skyphotons  = Math.pow(10.0,((instZp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                                    //  - must multiply by areaofdisk since skymag
+                                                                                    //    in mag/arcsec2
+               var a = expt * expt;
+               var b = -snr * snr * expt;
+               var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
+               var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
+               var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
+               var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
+
+
+
+                     // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
                limMag = -2.5 * Math.log10(starphotons) + instZp;        // Calculate the limiting magnitude
-              dataLine.push(limMag);                                    // Add to list
+               dataLine.push(limMag);                                    // Add to list
            });
 
             data.addRow(dataLine);
@@ -699,40 +704,37 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
 
 
-          var spskymag = spskybr - (spskyoff * spsky) ;  //
-
+          var spskymag = spskybr - (spskyoff * spsky);  //
           var spsee = 0.5;  // same as imaging - base seeing
 
 
            for (var si = 0; si <= 25; si++) {
                var spseeing = spsee + (si / 10) ;           // same as for imaging - step through seeing in arcsec
-
-
+               var spdataLine = [spseeing]  // Create the list for the dataline with seeing value
                var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
                var spatialarea = (slitwd * spseeing * 2) / (sppixscale * sppixscale) ;  // area on sky, in pixels
                var specpixsc   = (refwav) / (spres * wvpixscale) ;                  // spec resolution, in pixels
                var spnumberofpixels = spatialarea * specpixsc ;  // number of pixels per spat/spect resln element
 
-               // NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
-               var spskyphotons  = Math.pow(10.0,((spzp -spskymag)/2.5)) * (refwav/spres) * spatialarcs;
-                             // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
-                             // resolution element (really electrons/res elem):
-                             //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
-                             //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
-
-               var spa = spexpt * spexpt;
-               var spb = -spsnr * spsnr * spexpt;
-               var spc = -spsnr * spsnr * ((spskyphotons * spexpt * spatialarcs) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise * spreadnoise * spnumberofpixels));
-               var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
-               var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
-               var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
-
-
-               var spdataLine = [spseeing]  // Create the list for the dataline with seeing value
-
                spaperSizes.forEach(function(spaper){                           // For each aperture size
-                  spinstZp = spzp -2.5*Math.log10((2*2)/(spaper*spaper))           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-                  splimMag = -2.5 * Math.log10(spstarphotons) + spinstZp;        // Calculate the limiting magnitude
+                  spinstZp = spzp -2.5*Math.log10((2*2)/(spaper*spaper))
+
+               // NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
+                  var spskyphotons  = (Math.pow(10.0,((spinstZp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
+                                // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
+                                // resolution element (really electrons/res elem):
+                                //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
+                                //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
+
+                  var spa = spexpt * spexpt;
+                  var spb = -spsnr * spsnr * spexpt;
+                  var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise * spreadnoise * spnumberofpixels));
+                  var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
+                  var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
+                  var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
+
+           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+                  var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spinstZp;        // Calculate the limiting magnitude
                  spdataLine.push(splimMag);                                    // Add to list
               });
 
