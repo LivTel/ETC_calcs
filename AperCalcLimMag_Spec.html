@@ -62,9 +62,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               <option value="ringo"> RINGO3</option>
             </select>
           </td>
-          <td id="pulldn"> Exposure Time (s):</td>
+          <td id="pulldn"> Seeing (arcsec):</td>
           <td>
-            <input id="expt" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="1200" data-slider-step="30" data-slider-value="300" onchange="calcimage();"/>
+            <input id="seeing" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="3.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
             </td>
           </tr>
           <tr>
@@ -212,7 +212,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
       google.charts.setOnLoadCallback(calcimage);
       google.charts.setOnLoadCallback(calcspec);
 
-      var slider1 = new Slider("#expt", {
+      var slider1 = new Slider("#seeing", {
         formatter: function(value) {
             return value;
           }
@@ -255,7 +255,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var instrum = document.getElementById("instrum").value;
           var binn = document.getElementById("binn").value;
           var filt = document.getElementById("filt").value;
-          var expt = +document.getElementById("expt").value;
+          var seeing = +document.getElementById("seeing").value;
           var snr = +document.getElementById("snr").value;
           var sky = +document.getElementById("sky").value;
           var apers = document.getElementById("apers").value;
@@ -484,7 +484,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // ****
 
           var data = new google.visualization.DataTable();
-          data.addColumn('number', 'Seeing Value');
+          data.addColumn('number', 'Exposure Time');
           const aperSizes = apers.split(",").map(Number)//[2, 2.5, 3.0, 4.0];
           //document.write(aperSizes[0])
           aperSizes.forEach(function(aper){
@@ -507,11 +507,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var skymag = skybr - (skyoff * sky) ;  // calculate the skymag
                                                  // skyoff takes into account 1 mag change in
                                                  // V doesn't equal 1 mag change in u or r.
-          var see = 0.5;  // base seeing
+          var expt = 0;  // initial exposure time
 
-          for (var i = 0; i <= 25; i++) {
-            var seeing = see + (i / 10);                                         // stepping through seeing (in arcsec)
-            var dataLine = [seeing]
+          for (var i = 0; i <= 600; i++) {
+            var expt = expt + (i);                                         // stepping through seeing (in arcsec)
+            var dataLine = [expt]
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
             var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
 
@@ -546,17 +546,17 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             curveType: 'function',
             legend: { position: 'right' },
             hAxis: {
-              title: "Seeing / arcsec",
+              title: "Exposure time (s)",
               viewWindow: {
-                min: 0.5,
-                max: 3
+                min: 0,
+                max: 600
               }
             },
             vAxis: {
               title: "Limiting Magnitude",
               viewWindow: {
-                min: 14,
-                max: 24,
+                min: 16,
+                max: 22,
               }
             }
           };

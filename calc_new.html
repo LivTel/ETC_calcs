@@ -4,8 +4,10 @@
 
 LOG of changes and updates:
 
-  - Version 1.0 (30 Apr 2018): Cloned the ExpTime calculator V1.4 and modified for different collecting areas for NRT
-  - Version 2.0 (17 May 2018): DMA used Marco Lam's graphical google chart work and modified to solve for Limiting Magnitude
+  - Version 1.0 (30 Apr 2019): Cloned the ExpTime calculator V1.4 and modified for different collecting areas for NRT
+  - Version 2.0 (17 May 2019): DMA used Marco Lam's graphical google chart work and modified to solve for Limiting Magnitude
+
+  - Version 3.0 (03 June 2019): DMA extended with a second plot with the Spectrograph options
 
 Previous versions of the Exposure time calulutaor on which this was built were;
         - Version 1.0 (19 Jun 2014): original code with guestimates for SPRAT, RISE and IO:I
@@ -32,8 +34,21 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+
+    <style type="text/css">
+    td {padding:0 15px 0 15px;}
+    </style>
+
+
+
     <center>
-        <div id="curve_chart" style="width: 1000px; height: 600px"></div>
+
+      <br><br>
+      <p> Enter a comma seperated list of the telescope apertures (in metres) into the Apertures box</p>
+       <p style="width:600px"> NOTE: The calculation assumes that the collecting area of the telescope scales as the square of the aperture (i.e. that the ratio of primary mirror diameter to secondary mirror obscuration diameter is fixed). Further the pixel scale of an LT instrument on a larger telescope is assumed to be the same.</p>
+
+
+      <div id="curve_chart" style="width: 1000px; height: 600px"></div>
 
       <!-- .......... INPUT DATA TABLE .......... -->
       <table>
@@ -47,10 +62,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               <option value="ringo"> RINGO3</option>
             </select>
           </td>
-          <td id="pulldn"> Exposure Time (s):</td>
+          <td id="pulldn"> SNR: </td>
           <td>
-            <input id="expt" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="1200" data-slider-step="30" data-slider-value="300" onchange="calcimage();"/>
-            </td>
+            <input id="snr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+          </td>
+
           </tr>
           <tr>
             <td id="pulldn">Binning: </td>
@@ -61,9 +77,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                 <option value="rgbin"> RINGO3 (unbinned) </option>
               </select>
             </td>
-            <td id="pulldn"> SNR: </td>
+            <td id="pulldn"> Seeing (arcsec):</td>
             <td>
-              <input id="snr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+              <input id="seeing" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
               </td>
             </tr>
             <tr>
@@ -86,29 +102,77 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                   <option value="fringb">  RINGO3 Blue 'e'  </option>
                 </select>
               </td>
-              <td>Sky Brightness: </td>
+              <td>Sky Brightness (mag/arcsec): </td>
               <td>
                 <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td id="pulldn">Apertures (m):</td>
-               <td>
-                  <input id="apers" value="2.0,3.5,4.2" onchange="calcimage();">
-               </td>
-
-
-
-
          </table>
-         <br>
-         <p> Enter a comma seperated list of the telescope apertures (in metres) into the Apertures box</p>
-          <p style="width:600px"> NOTE: The calculation assumes that the collecting area of the telescope scales as the square of the aperture (i.e. that the ratio of primary mirror diameter to secondary mirror obscuration diameter is fixed). Further the pixel scale of an LT instrument on a larger telescope is assumed to be the same.</p>
 
 
-         <p>  <i>(Version 2.0 - May 2019, Marco Lam and Doug Arnold)</i> </p>
+
+
+         <br><br>
+
+         <div id="spcurve_chart" style="width: 1000px; height: 600px"></div>
+
+         <table>
+           <tr>
+               <td id="pulldn">Instrument: </td>
+               <td>
+                 <select name="spectrometer" id="spinstrum" onchange="calcspec();">
+                    <option value="frodo">   FRODOspec</option>
+                    <option value="sprat">   SPRAT</option>
+                 </select>
+               </td>
+               <td id="pulldn"> SNR: </td>
+              <td>
+               <input id="spsnr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
+               </td>
+           </tr>
+           <tr>
+
+              <td id="pulldn">Slit: </td>
+              <td>
+                 <select name="slitwidth" id="spslit" onchange="calcspec();">
+                    <option value="ifu">  IFU fibre bundle  </option>
+                    <option value="spratslit"> SPRAT 2 arcsec slit </option>
+                 </select>
+              </td>
+              <td id="pulldn"> Seeing (arcsec): </td>
+              <td>
+                 <input id="spseeing" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
+                 </td>
+           </tr>
+           <tr>
+              <td id="pulldn">Spectrometer arm: </td>
+              <td>
+                 <select name="specarm" id="sparm" onchange="calcspec();">
+                    <option value="frredarmv"> FRODOspec Red arm (VPH)  </option>
+                    <option value="frbluarmv"> FRODOspec Blue arm (VPH) </option>
+                    <option value="frredarm">  FRODOspec Red arm (low res)  </option>
+                    <option value="frbluarm">  FRODOspec Blue arm (low res) </option>
+                    <option value="spredarm">  SPRAT Red region  </option>
+                    <option value="spbluarm">  SPRAT Blue region </option>
+                 </select>
+              </td>
+              <td>Sky Brightness: </td>
+              <td>
+                <input id="spsky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
+              </td>
+            </tr>
+           </tr>
+         </table>
+
+
+
+
+
+
+         <br><br><br>
+
+
+         <p>  <i>(Version 3.0 - May 2019, Marco Lam and Doug Arnold)</i> </p>
     </center>
     <!-- ......................................................................... -->
     <!-- ... The rest of this file is JavaScript code within the <script> tags ... -->
@@ -130,20 +194,39 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(calcimage);
+      google.charts.setOnLoadCallback(calcspec);
 
-      var slider1 = new Slider("#sky", {
+      var slider1 = new Slider("#seeing", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider2 = new Slider("#expt", {
+      var slider2 = new Slider("#snr", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider3 = new Slider("#snr", {
+      var slider3 = new Slider("#sky", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      var slider4 = new Slider("#spseeing", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      var slider5 = new Slider("#spsnr", {
+        formatter: function(value) {
+            return value;
+          }
+      });
+
+      var slider6 = new Slider("#spsky", {
         formatter: function(value) {
             return value;
           }
@@ -156,10 +239,10 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var instrum = document.getElementById("instrum").value;
           var binn = document.getElementById("binn").value;
           var filt = document.getElementById("filt").value;
-          var expt = +document.getElementById("expt").value;
+          var seeing = +document.getElementById("seeing").value;
           var snr = +document.getElementById("snr").value;
           var sky = +document.getElementById("sky").value;
-          var apers = document.getElementById("apers").value;
+
 
 
           // FIRST PULL-DOWN ***
@@ -385,9 +468,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // ****
 
           var data = new google.visualization.DataTable();
-          data.addColumn('number', 'Seeing Value');
-          const aperSizes = apers.split(",").map(Number)//[2, 2.5, 3.0, 4.0];
-          //document.write(aperSizes[0])
+          data.addColumn('number', 'Exposure Time');
+          const aperSizes = [2];
           aperSizes.forEach(function(aper){
              data.addColumn('number', aper.toFixed(1) + 'm Aperture');
           });
@@ -408,28 +490,32 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var skymag = skybr - (skyoff * sky) ;  // calculate the skymag
                                                  // skyoff takes into account 1 mag change in
                                                  // V doesn't equal 1 mag change in u or r.
-          var see = 0.5;  // base seeing
+          var expt = 0;  // initial exposure time
 
-          for (var i = 0; i <= 25; i++) {
-            var seeing = see + (i / 10);                                         // stepping through seeing (in arcsec)
+          for (var i = 0; i <= 1200; i++) {
+            var expt = expt + (i);                                         // stepping through seeing (in arcsec)
+            var dataLine = [expt]
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
             var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
-            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                                 //  - must multiply by areaofdisk since skymag
-                                                                                 //    in mag/arcsec2
-            var a = expt * expt;
-            var b = -snr * snr * expt;
-            var c = -snr * snr * ((skyphotons * expt * areaofdisk) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
-            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
-            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
-            var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
 
-            var dataLine = [seeing]                                     // Create the list for the dataline with seeing value
 
             aperSizes.forEach(function(aper){                           // For each aperture size
-               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))
+               var skyphotons  = Math.pow(10.0,((instZp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                                    //  - must multiply by areaofdisk since skymag
+                                                                                    //    in mag/arcsec2
+               var a = expt * expt;
+               var b = -snr * snr * expt;
+               var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
+               var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
+               var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
+               var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
+
+
+
+                     // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
                limMag = -2.5 * Math.log10(starphotons) + instZp;        // Calculate the limiting magnitude
-              dataLine.push(limMag);                                    // Add to list
+               dataLine.push(limMag);                                    // Add to list
            });
 
             data.addRow(dataLine);
@@ -439,27 +525,230 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // *************************************************************************
 
           var options = {
-            title: 'Limiting Magnitude Calculator',
+            title: 'Limiting Magnitude Calculator - Imaging',
             curveType: 'function',
-            legend: { position: 'right' },
+            legend:'none',
             hAxis: {
-              title: "Seeing / arcsec",
+              title: "Exposure time (s)",
               viewWindow: {
-                min: 0.5,
-                max: 3
+                min: 0,
+                max: 1200
               }
             },
             vAxis: {
               title: "Limiting Magnitude",
               viewWindow: {
-                min: 14,
-                max: 24,
+                min: 16,
+                max: 22,
               }
             }
           };
 
           chart.draw(data, options);
       }
+
+      function calcspec() {
+
+         var spchart = new google.visualization.LineChart(document.getElementById('spcurve_chart'));
+
+          // Look up (Define?) the input elements in the document for IMAGING
+          var spinstrum = document.getElementById("spinstrum").value;
+          var spslit = document.getElementById("spslit").value;
+          var sparm = document.getElementById("sparm").value;
+          var spseeing = +document.getElementById("spseeing").value;
+          var spsnr = document.getElementById("spsnr").value;
+          var spsky = document.getElementById("spsky").value;
+
+          // FIRST PULL-DOWN ***
+          // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
+          if (spinstrum == "frodo")    { // FRODO
+            var sppixscale = 0.82;       // spatial pixel scale (arcsec)
+            var spdarkcurrent = 0;       // ??
+            var spreadnoise = 10;        // from website
+          } else                       { // sprat
+            var sppixscale = 0.48;       // spatial pixel scale (arcsec)
+            var spdarkcurrent = 0;       // ??
+            var spreadnoise = 9;         // from SPIE 2014 paper.
+         };
+
+          // SECOND PULL-DOWN ***
+          // Look-up tables of variables - SLIT width (arcsec)
+          if (spslit == "spratslit")   {
+            var slitwd = 2;            // SPRAT slit ESTIMATE
+          } else                       {
+            var slitwd = 10;           // FRODO field-of-view
+          };
+
+          // THIRD PULL-DOWN ***
+          // Look-up tables of other variables (all instrument and arm specific)
+          //  * spzp should be ZP corresponding to 1 electron/second/Angstrom
+          //  * spskybr (Sky brightness) in mag/sqr arcsec
+          // ...
+          if (sparm == "frredarmv") {  // **** FRODO Red VPH @ 7000 (R-band)
+            var spzp = 16.0;          // FRODO zeropoint at 7000 (from website) = 15.30. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 20.8;        // sky brightness in mag/arcsec^2
+            var spskyoff = 1.0;        // Used when calculating bright sky; +2 mag,+4 mag,etc.
+            var spres = 5300;          // spectral resolution, lambda/delta-lambda
+            var wvpixscale = 0.8;      // spectral pixel scale, in Angstrom
+            var refwav = 7000;         // reference wavelength for calculation, in Angstrom
+           } else if (sparm == "frbluarmv") { // **** FRODO Blue VPH @ 4500 (B-band)
+            var spzp = 14.5;           // FRODO zeropoint at 4500 (from website)  = 14.50. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 22.8;        // Bessell B-band
+            var spskyoff = 1.5;        // Bessell B-band
+            var spres = 5500;
+            var wvpixscale = 0.35;
+            var refwav = 4500;
+          } else if (sparm == "frredarm") {  // **** FRODO Red @ 7000
+            var spzp = 15.60;           // FRODO zeropoint at 7000 (from website) = 14.90. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 20.8;        // R band
+            var spskyoff = 1.0;        // R band
+            var spres = 2200;
+            var wvpixscale = 1.9;
+            var refwav = 7000;
+         } else if (sparm == "frbluarm") {   // **** FRODO Blue @ 4500
+            var spzp = 14.70; 			// FRODO zeropoint at 4500 (from website) = 14.20. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 22.8;        // Bessell B-band
+            var spskyoff = 1.5;        // Bessell B-band
+            var spres = 2600;
+            var wvpixscale = 0.60;
+            var refwav = 4500;
+
+         } else if (sparm == "spredarm") {   // **** SPRAT Red @ 7000
+            var spzp = 17.7;           // Estimate giving results similar to SPIE paper = 17.0. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 20.8;        // r band (Originally had 24.6 here. Not sure why. C Benn measures 21.8 in V. 20.8 in R is a reasonable guess.)
+            var spskyoff = 1.0;        // r band
+            var spres = 350;           // Estimate from SPIE paper
+            var wvpixscale = 9.0;      // GUESSED!!!
+            var refwav = 7000;
+          } else                    {  // **** SPRAT blue @ 4500
+            var spzp = 17.2;           // Estimate giving results similar to SPIE paper = 16.5. In Jan 2016 CMC added 0.7 following 2015 recoating.
+            var spskybr = 22.8;        // Bessell B-band  (Originally had 24.6 here. Not sure why. C Benn measures 21.8 in V. 22.8 in B is a reasonable guess.)
+            var spskyoff = 1.5;        // Bessell B-band
+            var spres = 350;           // Estimate from SPIE paper
+            var wvpixscale = 3.0;      // GUESSED!!!
+            var refwav = 4500;
+          };
+
+          // *************************************************************************
+
+          // ****
+          // **** Check the select-option combinations are valid
+          // ****
+
+          //FRODO
+          if (spinstrum == "frodo" && spslit == "spratslit") {
+              alert("Incorrect Instrument-Slit Combination!");
+          }
+          if (spinstrum == "frodo" && sparm == "spbluarm") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+          if (spinstrum == "frodo" && sparm == "spredarm") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+
+          //SPRAT
+          if (spinstrum == "sprat" && spslit == "ifu") {
+              alert("Incorrect Instrument-Slit Combination!");
+          }
+          if (spinstrum == "sprat" && sparm == "frredarmv") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+          if (spinstrum == "sprat" && sparm == "frbluarmv") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+          if (spinstrum == "sprat" && sparm == "frredarm") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+          if (spinstrum == "sprat" && sparm == "frbluarm") {
+              alert("Incorrect Instrument-Arm Combination!");
+          }
+
+          // *************************************************************************
+
+          // ****
+          // **** MAIN CALCULATION (Spectroscopy)
+          // ****
+
+          // As for imaging, calculate exposure times based on a range of seeing
+          // and sky brightness values.
+          // Step through seeing and sky brightness.
+          //    - seeing is 1.0 when si=1; step by 0.5 arcsec so seeing is 4.0 when si=7
+          //    - sky brightness is Dark when sj=0; step by 1 mag so sky is dark+10 when sj=10
+          // Output values stored in a 1-D variable
+
+          var spdata = new google.visualization.DataTable();
+          spdata.addColumn('number', 'Seeing Value');
+          const spaperSizes = [2];
+          //console.log(spaperSizes[0]);
+          spaperSizes.forEach(function(spaper){
+             spdata.addColumn('number', spaper.toFixed(1) + 'm Aperture');
+          });
+
+
+
+          var spskymag = spskybr - (spskyoff * spsky);  //
+          var spexpt = 0;
+
+           for (var si = 0; si <= 1200; si++) {
+               var spexpt = spexpt + (si) ;           // same as for imaging - step through seeing in arcsec
+               var spdataLine = [spexpt]  // Create the list for the dataline with seeing value
+               var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
+               var spatialarea = (slitwd * spseeing * 2) / (sppixscale * sppixscale) ;  // area on sky, in pixels
+               var specpixsc   = (refwav) / (spres * wvpixscale) ;                  // spec resolution, in pixels
+               var spnumberofpixels = spatialarea * specpixsc ;  // number of pixels per spat/spect resln element
+
+               spaperSizes.forEach(function(spaper){                           // For each aperture size
+                  spinstZp = spzp -2.5*Math.log10((2*2)/(spaper*spaper))
+
+               // NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
+                  var spskyphotons  = (Math.pow(10.0,((spinstZp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
+                                // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
+                                // resolution element (really electrons/res elem):
+                                //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
+                                //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
+
+                  var spa = spexpt * spexpt;
+                  var spb = -spsnr * spsnr * spexpt;
+                  var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise * spreadnoise * spnumberofpixels));
+                  var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
+                  var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
+                  var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
+
+           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+                  var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spinstZp;        // Calculate the limiting magnitude
+                 spdataLine.push(splimMag);                                    // Add to list
+              });
+
+               spdata.addRow(spdataLine);
+            }
+
+            var spoptions = {
+              title: 'Limiting Magnitude Calculator - Spectroscopy',
+              curveType: 'function',
+              legend: 'none',
+              hAxis: {
+                title: "Exposure time (s)",
+                viewWindow: {
+                  min: 0,
+                  max: 1200
+                }
+              },
+              vAxis: {
+                title: "Limiting Magnitude",
+                viewWindow: {
+                  min: 8,
+                  max: 20,
+                }
+              }
+            };
+
+            spchart.draw(spdata, spoptions);
+
+
+
+
+          }
+
 
     </script>
   </body>
