@@ -37,6 +37,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
     <style type="text/css">
     td {padding:0 15px 0 15px;}
+    input[type=number]{
+    width: 80px;}
+   }
     </style>
 
 
@@ -44,13 +47,14 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     <center>
 
       <br><br>
-      <p> Enter a comma seperated list of the telescope apertures (in metres) into the Apertures box</p>
-       <p style="width:600px"> NOTE: The calculation assumes that the collecting area of the telescope scales as the square of the aperture (i.e. that the ratio of primary mirror diameter to secondary mirror obscuration diameter is fixed). Further the pixel scale of an LT instrument on a larger telescope is assumed to be the same.</p>
+      <p> </p>
 
 
-      <div id="curve_chart" style="width: 1000px; height: 600px"></div>
+
+      <div id="curve_chart" style="width: 1000px; height: 600px" class="column"></div>
 
       <!-- .......... INPUT DATA TABLE .......... -->
+      <br>
       <table>
         <tr>
           <td id="pulldn">Instrument: </td>
@@ -108,7 +112,22 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
             </tr>
          </table>
-
+         <br>
+         <table>
+           <tr>
+              <td>Magnitude Min</td>
+              <td>
+                <input id="magmin" size="4" type="number" value=16 min=0 max=16 onchange="calcimage();">
+             </td>
+             <td>Magnitude Max</td>
+             <td>
+               <input id="magmax" size="4" type="number" value=22 min=22 max=30 onchange="calcimage();">
+             </td>
+             <td>Exposure Time Max</td>
+             <td>
+               <input id="exptmax" size="4" type="number" value=1200 min=200 step=200 onchange="calcimage();">
+             </td>
+        </table>
 
 
 
@@ -163,7 +182,23 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             </tr>
            </tr>
          </table>
+         <br>
+         <table>
+           <tr>
+               <td>Magnitude Min</td>
+               <td>
+                 <input id="spmagmin" size="4" type="number" value=12 min=0 max=12 onchange="calcspec();">
+             </td>
+             <td>Magnitude Max</td>
+             <td>
+                <input id="spmagmax" size="4" type="number" value=20 min=20 max=30 onchange="calcspec();">
+             </td>
+             <td>Exposure Time Max</td>
+             <td>
+                <input id="spexptmax" size="4" type="number" value=1200 min=200 step=200 onchange="calcspec();">
+             </td>
 
+         </table>
 
 
 
@@ -172,7 +207,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
          <br><br><br>
 
 
-         <p>  <i>(Version 3.0 - May 2019, Marco Lam and Doug Arnold)</i> </p>
+         <p>  <i>(Version 3.0 - Nov 2019, Marco Lam and Doug Arnold)</i> </p>
     </center>
     <!-- ......................................................................... -->
     <!-- ... The rest of this file is JavaScript code within the <script> tags ... -->
@@ -242,6 +277,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var seeing = +document.getElementById("seeing").value;
           var snr = +document.getElementById("snr").value;
           var sky = +document.getElementById("sky").value;
+          var magmin = document.getElementById("magmin").value;
+          var magmax = document.getElementById("magmax").value;
+          var exptmax = document.getElementById("exptmax").value;
 
 
 
@@ -469,10 +507,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Exposure Time');
-          const aperSizes = [2];
-          aperSizes.forEach(function(aper){
-             data.addColumn('number', aper.toFixed(1) + 'm Aperture');
-          });
+          data.addColumn('number', 'Limiting Magnitude');
 
           //}
 
@@ -498,25 +533,22 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
             var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
 
-
-            aperSizes.forEach(function(aper){                           // For each aperture size
-               instZp = zp -2.5*Math.log10((2*2)/(aper*aper))
-               var skyphotons  = Math.pow(10.0,((instZp - skymag)/2.5)) * areaofdisk;   // within aperture
+            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
                                                                                     //  - must multiply by areaofdisk since skymag
                                                                                     //    in mag/arcsec2
-               var a = expt * expt;
-               var b = -snr * snr * expt;
-               var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt * numberofpixels) + (readnoise * readnoise * numberofpixels));
-               var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (+ve)
-               var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solve quadratic equation (-ve)
-               var starphotons = Math.max(starphotonsa, starphotonsb);     // Select highest value.
+            var a = expt * expt;
+            var b = -snr * snr * expt;
+            var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) + (readnoise * readnoise * numberofpixels));
+            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (+ve)
+            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (-ve)
+            var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
 
 
 
                      // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-               limMag = -2.5 * Math.log10(starphotons) + instZp;        // Calculate the limiting magnitude
-               dataLine.push(limMag);                                    // Add to list
-           });
+            limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
+            dataLine.push(limMag);                                    // Add to list
+
 
             data.addRow(dataLine);
 
@@ -532,14 +564,14 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               title: "Exposure time (s)",
               viewWindow: {
                 min: 0,
-                max: 1200
+                max: exptmax
               }
             },
             vAxis: {
               title: "Limiting Magnitude",
               viewWindow: {
-                min: 16,
-                max: 22,
+                min: magmin,
+                max: magmax,
               }
             }
           };
@@ -558,6 +590,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var spseeing = +document.getElementById("spseeing").value;
           var spsnr = document.getElementById("spsnr").value;
           var spsky = document.getElementById("spsky").value;
+          var spmagmin = document.getElementById("spmagmin").value;
+          var spmagmax = document.getElementById("spmagmax").value;
+          var spexptmax = document.getElementById("spexptmax").value;
 
           // FIRST PULL-DOWN ***
           // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
@@ -678,11 +713,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           var spdata = new google.visualization.DataTable();
           spdata.addColumn('number', 'Seeing Value');
-          const spaperSizes = [2];
-          //console.log(spaperSizes[0]);
-          spaperSizes.forEach(function(spaper){
-             spdata.addColumn('number', spaper.toFixed(1) + 'm Aperture');
-          });
+          spdata.addColumn('number', 'Limiting Magnitude');
+
 
 
 
@@ -697,28 +729,21 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                var specpixsc   = (refwav) / (spres * wvpixscale) ;                  // spec resolution, in pixels
                var spnumberofpixels = spatialarea * specpixsc ;  // number of pixels per spat/spect resln element
 
-               spaperSizes.forEach(function(spaper){                           // For each aperture size
-                  spinstZp = spzp -2.5*Math.log10((2*2)/(spaper*spaper))
-
-               // NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
-                  var spskyphotons  = (Math.pow(10.0,((spinstZp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
-                                // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
-                                // resolution element (really electrons/res elem):
-                                //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
-                                //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
-
-                  var spa = spexpt * spexpt;
-                  var spb = -spsnr * spsnr * spexpt;
-                  var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise * spreadnoise * spnumberofpixels));
-                  var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
-                  var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
-                  var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
-
-           // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-                  var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spinstZp;        // Calculate the limiting magnitude
-                 spdataLine.push(splimMag);                                    // Add to list
-              });
-
+               //NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
+               var spskyphotons  = (Math.pow(10.0,((spzp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
+                             // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
+                             // resolution element (really electrons/res elem):
+                             //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
+                             //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
+               var spa = spexpt * spexpt;
+               var spb = -spsnr * spsnr * spexpt;
+               var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise *spreadnoise * spnumberofpixels));
+               var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
+               var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
+               var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
+           // Calulate the inst zeropoint offset (this should be out of the loop for improved performance!)
+               var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spzp;        // Calculate the limiting magnitude
+               spdataLine.push(splimMag);                                    // Add to list
                spdata.addRow(spdataLine);
             }
 
@@ -730,14 +755,14 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                 title: "Exposure time (s)",
                 viewWindow: {
                   min: 0,
-                  max: 1200
+                  max: spexptmax
                 }
               },
               vAxis: {
                 title: "Limiting Magnitude",
                 viewWindow: {
-                  min: 8,
-                  max: 20,
+                  min: spmagmin,
+                  max: spmagmax,
                 }
               }
             };
