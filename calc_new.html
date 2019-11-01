@@ -527,7 +527,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                                                  // V doesn't equal 1 mag change in u or r.
           var expt = 0;  // initial exposure time
 
-          for (var i = 0; i <= 1200; i++) {
+          for (var i = 0; i <= exptmax; i++) {
             var expt = expt + (i);                                         // stepping through seeing (in arcsec)
             var dataLine = [expt]
             var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
@@ -557,7 +557,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // *************************************************************************
 
           var options = {
-            title: 'Limiting Magnitude Calculator - Imaging',
+            title: 'Exposure Time Calculator - Imaging',
             curveType: 'function',
             legend:'none',
             hAxis: {
@@ -721,7 +721,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var spskymag = spskybr - (spskyoff * spsky);  //
           var spexpt = 0;
 
-           for (var si = 0; si <= 1200; si++) {
+           for (var si = 0; si <= spexptmax; si++) {
                var spexpt = spexpt + (si) ;           // same as for imaging - step through seeing in arcsec
                var spdataLine = [spexpt]  // Create the list for the dataline with seeing value
                var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
@@ -748,7 +748,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             }
 
             var spoptions = {
-              title: 'Limiting Magnitude Calculator - Spectroscopy',
+              title: 'Exposure Time Calculator - Spectroscopy',
               curveType: 'function',
               legend: 'none',
               hAxis: {
