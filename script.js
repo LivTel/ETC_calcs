@@ -1,4 +1,8 @@
 // Add your javascript here
 $(function(){
- $("#size").chained("#color");
+ $("#binn").chained("#instrum");
+});
+
+$(function(){
+ $("#filt").chained("#instrum");
 });

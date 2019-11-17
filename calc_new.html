@@ -34,6 +34,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js" data-semver="2.0.3" data-require="jquery"></script>
+    <script type="text/javascript" src="http://www.appelsiini.net/projects/chained/jquery.chained.js?v=0.9.10"></script>
+    <script src="script.js"></script>
 
     <style type="text/css">
     td {padding:0 15px 0 15px;}
@@ -41,29 +44,21 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     width: 80px;}
    }
     </style>
-    <head>
-      <meta charset="utf-8" />
-      <title></title>
-      <link href="style.css" rel="stylesheet" />
-      <script src="http://code.jquery.com/jquery-2.0.3.min.js" data-semver="2.0.3" data-require="jquery"></script>
-      <script type="text/javascript" src="http://www.appelsiini.net/projects/chained/jquery.chained.js?v=0.9.10"></script>
-      <script src="script.js"></script>
-    </head>
 
-    <body>
-      <select class="form-control" id="color">
-        <option value="27">Blomme</option>
-        <option value="26">Grøn</option>
-        <option value="28">Syren</option>
-      </select>
-      <select class="form-control" id="size">
-        <option value="27" class="27">XL</option>
-        <option value="26" class="26">L</option>
-        <option value="26" class="26">SMALL</option>
-        <option value="26" class="26">L</option>
-        <option value="28" class="28">S</option>
-      </select>
-    </body>
+
+
+    <select class="form-controls" id="color">
+      <option value="Blue">Blomme</option>
+      <option value="Green">Grøn</option>
+      <option value="Other">Syren</option>
+    </select>
+    <select class="form-controls" id="size">
+      <option value="xx" class="Blue">XL</option>
+      <option value="26" class="Green">L</option>
+      <option value="26" class="Green">SMALL</option>
+      <option value="26" class="Green">L</option>
+      <option value="28" class="Other">S</option>
+    </select>
 
 
     <center>
@@ -81,7 +76,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
         <tr>
           <td id="pulldn">Instrument: </td>
           <td>
-            <select name="instrument" id="instrum" onchange="calcimage();">
+            <select name="instrument" id="instrum" class="selectpicker form-control" onchange="calcimage();"">
               <option value="ioo">   IO:O</option>
               <option value="ioi">   IO:I</option>
               <option value="rise">  RISE</option>
@@ -97,10 +92,15 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           <tr>
             <td id="pulldn">Binning: </td>
             <td>
-              <select name="binning" id="binn" onchange="calcimage();">
-                <option value="two"> 2x2               </option>
-                <option value="one"> 1x1               </option>
-                <option value="rgbin"> RINGO3 (unbinned) </option>
+              <select name="binning" id="binn" class="selectpicker form-control" onchange="calcimage();>
+                <option value="two" class="ioo"> 2x2               </option>
+                <option value="one" class="ioo"> 1x1               </option>
+                <option value="one" class="ioi"> 1x1               </option>
+                <option value="two" class="rise"> 2x2               </option>
+                <option value="one" class="rise"> 1x1               </option>
+                <option value="rgbin" class="ringo"> RINGO3 (unbinned) </option>
+
+
               </select>
             </td>
             <td id="pulldn"> Seeing (arcsec):</td>
@@ -111,21 +111,21 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             <tr>
               <td id="pulldn">Filter: </td>
               <td>
-                <select name="filter" id="filt" onchange="calcimage();">
-                  <option value="fsu">  SDSS-U (AB system)     </option>
-                  <option value="fbb">  Bessell-B (Vega) </option>
-                  <option value="fbv">  Bessell-V (Vega) </option>
-                  <option value="fsg">  SDSS-G (AB system)    </option>
-                  <option value="fsr">  SDSS-R (AB system)    </option>
-                  <option value="fsi">  SDSS-I (AB system)    </option>
-                  <option value="fsz">  SDSS-Z (AB system)    </option>
+                <select name="filter" id="filt" class="selectpicker form-control" onchange="calcimage();">
+                  <option value="fsu" class="ioo">  SDSS-U (AB system)     </option>
+                  <option value="fbb" class="ioo">  Bessell-B (Vega) </option>
+                  <option value="fbv" class="ioo">  Bessell-V (Vega) </option>
+                  <option value="fsg" class="ioo">  SDSS-G (AB system)    </option>
+                  <option value="fsr" class="ioo">  SDSS-R (AB system)    </option>
+                  <option value="fsi" class="ioo">  SDSS-I (AB system)    </option>
+                  <option value="fsz" class="ioo">  SDSS-Z (AB system)    </option>
                   <!--<option value="fjj">  J (IO:I)   </option>-->
-                  <option value="fhh">  H (Vega)   </option>
-                  <option value="frise"> RISE V+R   </option>
-                  <option value="frise720"> RISE 720nm </option>
-                  <option value="fringr">  RINGO3 Red 'd'  </option>
-                  <option value="fringg">  RINGO3 Green 'f'  </option>
-                  <option value="fringb">  RINGO3 Blue 'e'  </option>
+                  <option value="fhh" class="ioi">  H (Vega)   </option>
+                  <option value="frise" class="rise"> RISE V+R   </option>
+                  <option value="frise720" class="rise"> RISE 720nm </option>
+                  <option value="fringr" class="ringo">  RINGO3 Red 'd'  </option>
+                  <option value="fringg" class="ringo">  RINGO3 Green 'f'  </option>
+                  <option value="fringb" class="ringo">  RINGO3 Blue 'e'  </option>
                 </select>
               </td>
               <td>Sky Brightness (mag/arcsec): </td>
