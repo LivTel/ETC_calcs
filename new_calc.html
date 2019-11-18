@@ -62,7 +62,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
         <tr>
           <td id="pulldn">Instrument: </td>
           <td>
-            <select name="instrument" id="instrum" onchange="calcimage();"">
+            <select name="instrument" id="instrum"  width="180" style="width: 180px" onchange="calcimage();"">
               <option value="ioo">   IO:O</option>
               <option value="ioi">   IO:I</option>
               <option value="rise">  RISE</option>
@@ -78,7 +78,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           <tr>
             <td id="pulldn">Binning: </td>
             <td>
-              <select name="binning" id="binn" onchange="calcimage();>
+              <select name="binning" id="binn" width="180" style="width: 180px" onchange="calcimage();>
                 <option value="two" class="ioo"> 2x2               </option>
                 <option value="one" class="ioo"> 1x1               </option>
                 <option value="one" class="ioi"> 1x1               </option>
@@ -97,7 +97,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             <tr>
               <td id="pulldn">Filter: </td>
               <td>
-                <select name="filter" id="filt"  onchange="calcimage();">
+                <select name="filter" id="filt" width="180" style="width: 180px" onchange="calcimage();">
                   <option value="fsu" class="ioo">  SDSS-U (AB system)     </option>
                   <option value="fbb" class="ioo">  Bessell-B (Vega) </option>
                   <option value="fbv" class="ioo">  Bessell-V (Vega) </option>
@@ -147,7 +147,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
                <td id="pulldn">Instrument: </td>
                <td>
-                 <select name="spectrometer" id="spinstrum" onchange="calcspec();">
+                 <select name="spectrometer" id="spinstrum"  width="260" style="width: 260px" onchange="calcspec();">
                     <option value="frodo">   FRODOspec</option>
                     <option value="sprat">   SPRAT</option>
                  </select>
@@ -161,7 +161,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
               <td id="pulldn">Slit: </td>
               <td>
-                 <select name="slitwidth" id="spslit" onchange="calcspec();">
+                 <select name="slitwidth" id="spslit" width="260" style="width: 260px" onchange="calcspec();">
                     <option value="ifu" class="frodo">  IFU fibre bundle  </option>
                     <option value="spratslit" class="sprat"> SPRAT 2 arcsec slit </option>
                  </select>
@@ -174,7 +174,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
               <td id="pulldn">Spectrometer arm: </td>
               <td>
-                 <select name="specarm" id="sparm" onchange="calcspec();">
+                 <select name="specarm" id="sparm" width="260" style="width: 260px"  onchange="calcspec();">
                     <option value="frredarmv" class="frodo"> FRODOspec Red arm (VPH)  </option>
                     <option value="frbluarmv" class="frodo"> FRODOspec Blue arm (VPH) </option>
                     <option value="frredarm" class="frodo">  FRODOspec Red arm (low res)  </option>
