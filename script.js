@@ -6,3 +6,11 @@ $(function(){
 $(function(){
  $("#filt").chained("#instrum");
 });
+
+$(function(){
+ $("#spslit").chained("#spinstrum");
+});
+
+$(function(){
+ $("#sparm").chained("#spinstrum");
+});
