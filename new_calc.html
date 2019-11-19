@@ -58,11 +58,24 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
       <!-- .......... INPUT DATA TABLE .......... -->
       <br>
+
       <table>
+
+        <tr>
+           <td>
+           <td>
+           <td id="pulldn">Mode: </td>
+           <td>
+            <select name="plotMode" id="plotMode"  width="180" style="width: 180px" onchange="calcimage();">
+              <option value="snrMode">SNR</option>
+              <option value="seeMode">Seeing</option>
+              <option value="skyMode">Sky Brightness</option>
+            </select>
+        </tr>
         <tr>
           <td id="pulldn">Instrument: </td>
           <td>
-            <select name="instrument" id="instrum"  width="180" style="width: 180px" onchange="calcimage();"">
+            <select name="instrument" id="instrum"  width="180" style="width: 180px" onchange="calcimage();">
               <option value="ioo">   IO:O</option>
               <option value="ioi">   IO:I</option>
               <option value="rise">  RISE</option>
@@ -78,20 +91,18 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           <tr>
             <td id="pulldn">Binning: </td>
             <td>
-              <select name="binning" id="binn" width="180" style="width: 180px" onchange="calcimage();>
+              <select name="binning" id="binn" width="180" style="width: 180px" onchange="calcimage();">
                 <option value="two" class="ioo"> 2x2               </option>
                 <option value="one" class="ioo"> 1x1               </option>
                 <option value="one" class="ioi"> 1x1               </option>
                 <option value="two" class="rise"> 2x2               </option>
                 <option value="one" class="rise"> 1x1               </option>
                 <option value="rgbin" class="ringo"> RINGO3 (unbinned) </option>
-
-
               </select>
             </td>
             <td id="pulldn"> Seeing (arcsec):</td>
             <td>
-              <input id="seeing" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
+              <input name = "seeing" id="seeing" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
               </td>
             </tr>
             <tr>
@@ -116,7 +127,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness (mag/arcsec): </td>
               <td>
-                <input id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
+                <input name="sky" id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
          </table>
