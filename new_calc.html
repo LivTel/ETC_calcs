@@ -422,7 +422,6 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           if (plotMode == 'snrMode'){
             plotModeValues = snrText.split(",").map(Number)
-            console.log(plotModeValues)
             plotModeValues.forEach(function(snr){
                data.addColumn('number', 'SNR = ' + snr.toFixed())
              }
@@ -431,7 +430,6 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           if (plotMode == 'seeMode'){
             plotModeValues = seeText.split(",").map(Number)
-            console.log(plotModeValues)
             plotModeValues.forEach(function(see){
                data.addColumn('number', see.toFixed(1) + ' arcsec')
              }
@@ -440,7 +438,6 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           if (plotMode == 'skyMode'){
              plotModeValues = skyText.split(",").map(Number)
-             console.log(plotModeValues)
              plotModeValues.forEach(function(sky){
                 data.addColumn('number', 'DARK + ' + sky.toFixed(1) + ' mag/arcsec^2')
           });
@@ -464,33 +461,50 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            ;  // calculate the skymag
                                                  // skyoff takes into account 1 mag change in
                                                  // V doesn't equal 1 mag change in u or r.
-          var expt = 0;  // initial exposure time
 
 
+          var calcLimMag = function(snr, seeing, sky){
+          var skymag = skybr - (skyoff * sky)
+          var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
+          var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin);
+          var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                              //  - must multiply by areaofdisk since skymag
+                                                                              //    in mag/arcsec2
+          var a = expt * expt;
+          var b = -snr * snr * expt;
+          var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) +(readnoise * readnoise * numberofpixels));
+          var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation(+ve)
+          var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (ve)
+          var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
+
+               // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+          limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
+          dataLine.push(limMag);
+         }
+
+            var expt = 0;  // initial exposure time
             for (var i = 1; i <= exptmax; i+=exptmax/400) {
                var expt = expt + (i);
                var dataLine = [expt];
 
+               if (plotMode == 'snrMode'){
+                  plotModeValues.forEach(function(snr){
+                     calcLimMag(snr,seeing,sky);
+                  });
+               }
 
-               plotModeValues.forEach(function(snr){
-                  var skymag = skybr - (skyoff * sky)
-                  var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
-                  var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin);
-                  var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                                      //  - must multiply by areaofdisk since skymag
-                                                                                      //    in mag/arcsec2
-                  var a = expt * expt;
-                  var b = -snr * snr * expt;
-                  var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) +(readnoise * readnoise * numberofpixels));
-                  var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation(+ve)
-                  var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (ve)
-                  var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
+               if (plotMode == 'seeMode'){
+                  plotModeValues.forEach(function(seeing){
+                     calcLimMag(snr,seeing,sky);
+                  });
+               }
 
+               if (plotMode == 'skyMode'){
+                  plotModeValues.forEach(function(sky){
+                     calcLimMag(snr,seeing,sky);
+                  });
+               }
 
-                       // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-                  limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
-                  dataLine.push(limMag);
-              });
             data.addRow(dataLine); // Add to list
           }
 
