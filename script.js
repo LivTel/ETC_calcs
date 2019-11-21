@@ -18,23 +18,42 @@ $(function(){
 
 $(function()
 {
+
     $('#plotMode').change(function(){
-      if ($(this).val() == 'snrMode') {
-         console.log('Mode: SNR');
-      }
-      if ($(this).val() == 'seeMode') {
-         console.log('Mode: Seeing');
-         $('#seeing').replaceWith('<input type="text" data-slider-id="ex1Slider" name="seeing" id="seeing" value="2,3,4,5,6">');
-         $('#sky').replaceWith('<select data-slider-id="ex1Slider" type="text" name="sky" id="sky"></select>');
-      }
-      if ($(this).val() == 'skyMode') {
-         console.log('Mode: Sky');
-         $('#seeing').replaceWith('<select type="text" name="seeing" id="seeing"></select>');
-         $('#sky').replaceWith('<input type="text" name="sky" id="sky" value="2,3,4,5,6">');
-      }
-
-
+        showHide($(this).val());
     });
-
+    var defaultValue = $('#plotMode').val();
+    showHide(defaultValue);
 }
 );
+
+var hideSlider = function(id){
+  var $slider = $(id).siblings('.slider');
+  $slider.hide();
+  $(id).hide();
+};
+
+
+var showHide = function(plotMode){
+  $('.slider').show();
+  $('.constraintTextInput').show();
+
+
+  if (plotMode == 'snrMode') {
+     hideSlider('#snrSlid');
+     $('#seeText').hide();
+     $('#skyText').hide();
+
+  }
+  if (plotMode == 'seeMode') {
+    $('#snrText').hide();
+    hideSlider('#seeSlid');
+    $('#skyText').hide();
+  }
+  if (plotMode == 'skyMode') {
+    $('#snrText').hide();
+    $('#seeText').hide();
+    hideSlider('#skySlid');
+  }
+
+};

@@ -64,11 +64,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
         <tr>
            <td>
            <td>
-           <td id="pulldn">Mode: </td>
+           <td id="pulldn">Plot Mode: </td>
            <td>
-            <select name="plotMode" id="plotMode"  width="180" style="width: 180px" onchange="calcimage();">
+            <select name="plotMode" id="plotMode"  width="180" style="width: 180px" value="seeMode" onchange="calcimage();">
               <option value="snrMode">SNR</option>
-              <option value="seeMode">Seeing</option>
+              <option value="seeMode" selected="selected">Seeing</option>
               <option value="skyMode">Sky Brightness</option>
             </select>
         </tr>
@@ -84,7 +84,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           </td>
           <td id="pulldn"> SNR: </td>
           <td>
-            <input id="snr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+            <input type="text" name="snrText" class="constraintTextInput" id="snrText" value="10, 25, 50, 100">
+            <input name="snrSlid" id="snrSlid" data-slider-id="ex1Slider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
           </td>
 
           </tr>
@@ -92,17 +93,18 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             <td id="pulldn">Binning: </td>
             <td>
               <select name="binning" id="binn" width="180" style="width: 180px" onchange="calcimage();">
-                <option value="two" class="ioo"> 2x2               </option>
-                <option value="one" class="ioo"> 1x1               </option>
-                <option value="one" class="ioi"> 1x1               </option>
-                <option value="two" class="rise"> 2x2               </option>
-                <option value="one" class="rise"> 1x1               </option>
+                <option value="ioo2" class="ioo"> 2x2               </option>
+                <option value="ioo1" class="ioo"> 1x1               </option>
+                <option value="ioi1" class="ioi"> 1x1               </option>
+                <option value="rise2" class="rise"> 2x2               </option>
+                <option value="rise1" class="rise"> 1x1               </option>
                 <option value="rgbin" class="ringo"> RINGO3 (unbinned) </option>
               </select>
             </td>
             <td id="pulldn"> Seeing (arcsec):</td>
             <td>
-              <input name = "seeing" id="seeing" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
+              <input type="text" name="seeText" class="constraintTextInput" id="seeText" value="0.8, 1, 1.2, 1.4, 1.6">
+              <input name="seeSlid" id="seeSlid" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
               </td>
             </tr>
             <tr>
@@ -127,7 +129,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness (mag/arcsec): </td>
               <td>
-                <input name="sky" id="sky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
+                  <input type="text" name="skyText" class="constraintTextInput" id="skyText" value="0, 2, 4, 6, 8">
+                <input name="skySlid" id="skySlid" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
          </table>
@@ -165,7 +168,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                </td>
                <td id="pulldn"> SNR: </td>
               <td>
-               <input id="spsnr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
+               <input id="spsnrSlid" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
                </td>
            </tr>
            <tr>
@@ -250,19 +253,19 @@ Previous versions of the Exposure time calulutaor on which this was built were;
       google.charts.setOnLoadCallback(calcimage);
       google.charts.setOnLoadCallback(calcspec);
 
-      var slider1 = new Slider("#seeing", {
+      var slider1 = new Slider("#snrSlid", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider2 = new Slider("#snr", {
+      var slider2 = new Slider("#seeSlid", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider3 = new Slider("#sky", {
+      var slider3 = new Slider("#skySlid", {
         formatter: function(value) {
             return value;
           }
@@ -274,7 +277,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
       });
 
-      var slider5 = new Slider("#spsnr", {
+      var slider5 = new Slider("#spsnrSlid", {
         formatter: function(value) {
             return value;
           }
@@ -289,16 +292,17 @@ Previous versions of the Exposure time calulutaor on which this was built were;
       function calcimage() {
           var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-          // Look up (Define?) the input elements in the document for IMAGING
+          // Look up the input elements in the document for IMAGING
           var instrum = document.getElementById("instrum").value;
           var binn = document.getElementById("binn").value;
           var filt = document.getElementById("filt").value;
-          var seeing = +document.getElementById("seeing").value;
-          var snr = +document.getElementById("snr").value;
-          var sky = +document.getElementById("sky").value;
+          var seeing = +document.getElementById("seeSlid").value;
+          var snr = +document.getElementById("snrSlid").value;
+          var sky = +document.getElementById("skySlid").value;
           var magmin = document.getElementById("magmin").value;
           var magmax = document.getElementById("magmax").value;
           var exptmax = document.getElementById("exptmax").value;
+          var plotMode = document.getElementById("plotMode").value;
 
 
 
@@ -324,7 +328,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           // SECOND PULL-DOWN ***
           // Look-up tables of variables -BINNING
-          if (binn == "two") {
+          if (binn == "ioo2" || binn == "rise2") {
             var bin = 2;
           } else            {
             var bin = 1;
@@ -414,6 +418,24 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           data.addColumn('number', 'Exposure Time');
           data.addColumn('number', 'Limiting Magnitude');
 
+          if (plotMode == 'snrMode'){
+            const plotModeValues = snr.split(",").map(Number)
+            plotModeValues.forEach(function(aper){
+               data.addColumn('number', plotModeValues.toFixed(1))
+             }
+           )
+          }
+
+          if (plotMode == 'seeMode'){
+            //data.addColumn('number', 'Seeing');
+          }
+
+          if (plotMode == 'skyMode'){
+            //data.addColumn('number', 'Sky Brightness');
+          }
+
+
+
           //}
 
           // ****
@@ -432,31 +454,30 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                                                  // V doesn't equal 1 mag change in u or r.
           var expt = 0;  // initial exposure time
 
-          for (var i = 0; i <= exptmax; i++) {
-            var expt = expt + (i);                                         // stepping through seeing (in arcsec)
-            var dataLine = [expt]
-            var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
-            var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
 
-            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                                    //  - must multiply by areaofdisk since skymag
-                                                                                    //    in mag/arcsec2
-            var a = expt * expt;
-            var b = -snr * snr * expt;
-            var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) + (readnoise * readnoise * numberofpixels));
-            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (+ve)
-            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (-ve)
-            var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
-
-
-
-                     // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-            limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
-            dataLine.push(limMag);                                    // Add to list
+            for (var i = 1; i <= exptmax; i+=exptmax/400) {
+              var expt = expt + (i);                                         // stepping through seeing (in arcsec)
+              var dataLine = [expt]
+              var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
+              var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin); // area in pixels
+              plotModeValues.forEach(function(aper){
+                var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                                      //  - must multiply by areaofdisk since skymag
+                                                                                      //    in mag/arcsec2
+                var a = expt * expt;
+                var b = -snr * snr * expt;
+                var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) + (readnoise * readnoise * numberofpixels));
+                var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (+ve)
+                var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (-ve)
+                var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
 
 
-            data.addRow(dataLine);
 
+                       // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+              limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
+              dataLine.push(limMag);
+              });
+            data.addRow(dataLine); // Add to list
           }
 
           // *************************************************************************
@@ -591,7 +612,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var spskymag = spskybr - (spskyoff * spsky);  //
           var spexpt = 0;
 
-           for (var si = 0; si <= spexptmax; si++) {
+           for (var si = 1; si <= spexptmax; si+=spexptmax/200) {
                var spexpt = spexpt + (si) ;           // same as for imaging - step through seeing in arcsec
                var spdataLine = [spexpt]  // Create the list for the dataline with seeing value
                var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
