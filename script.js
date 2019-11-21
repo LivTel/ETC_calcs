@@ -19,41 +19,42 @@ $(function(){
 $(function()
 {
 
-    $('#plotMode').change(function(){
-        showHide($(this).val());
-    });
-    var defaultValue = $('#plotMode').val();
-    showHide(defaultValue);
+   $('#plotMode').change(function(){
+      showHideTextSlider($(this).val());
+   });
+   var defaultValue = $('#plotMode').val();
+   showHideTextSlider(defaultValue);
 }
 );
 
 var hideSlider = function(id){
-  var $slider = $(id).siblings('.slider');
-  $slider.hide();
-  $(id).hide();
+   var $slider = $(id).siblings('.slider');
+   $slider.hide();
+   $(id).hide();
 };
 
 
-var showHide = function(plotMode){
-  $('.slider').show();
-  $('.constraintTextInput').show();
 
-
-  if (plotMode == 'snrMode') {
-     hideSlider('#snrSlid');
-     $('#seeText').hide();
-     $('#skyText').hide();
+var showHideTextSlider = function(plotMode){
+   //Show all elements
+   $('.slider').show();
+   $('.constraintTextInput').show();
+   //Then Hide the unrequired required inputs
+   if (plotMode == 'snrMode') {
+      hideSlider('#snrSlid');
+      $('#seeText').hide();
+      $('#skyText').hide();
 
   }
-  if (plotMode == 'seeMode') {
-    $('#snrText').hide();
-    hideSlider('#seeSlid');
-    $('#skyText').hide();
+   if (plotMode == 'seeMode') {
+      $('#snrText').hide();
+      hideSlider('#seeSlid');
+      $('#skyText').hide();
   }
-  if (plotMode == 'skyMode') {
-    $('#snrText').hide();
-    $('#seeText').hide();
-    hideSlider('#skySlid');
+   if (plotMode == 'skyMode') {
+      $('#snrText').hide();
+      $('#seeText').hide();
+      hideSlider('#skySlid');
   }
 
 };
