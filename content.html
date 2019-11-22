@@ -534,7 +534,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           plotModeValues = []
 
           if (plotMode == 'snrMode'){
-            plotModeValues = snrText.split(",").map(Number)
+            plotModeValues = snrText.split(",").map(Number).sort()
             plotModeValues.forEach(function(snr){
                data.addColumn('number', 'SNR = ' + snr.toFixed())
              }
@@ -542,7 +542,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
 
           if (plotMode == 'seeMode'){
-            plotModeValues = seeText.split(",").map(Number)
+            plotModeValues = seeText.split(",").map(Number).sort()
             plotModeValues.forEach(function(see){
                data.addColumn('number', see.toFixed(1) + ' arcsec')
              }
@@ -550,7 +550,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
 
           if (plotMode == 'skyMode'){
-             plotModeValues = skyText.split(",").map(Number)
+             plotModeValues = skyText.split(",").map(Number).sort()
              plotModeValues.forEach(function(sky){
                 data.addColumn('number', 'DARK + ' + sky.toFixed(1) + ' mag/arcsec^2')
           });
