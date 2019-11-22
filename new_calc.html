@@ -35,8 +35,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.1/bootstrap-slider.min.js"></script>
-    <script src="http://code.jquery.com/jquery-2.0.3.min.js" data-semver="2.0.3" data-require="jquery"></script>
-    <script type="text/javascript" src="http://www.appelsiini.net/projects/chained/jquery.chained.js?v=0.9.10"></script>
+    <script src="https://code.jquery.com/jquery-2.0.3.min.js" data-semver="2.0.3" data-require="jquery"></script>
+    <script type="text/javascript" src="https://www.appelsiini.net/projects/chained/jquery.chained.js?v=0.9.10"></script>
     <script src="script.js"></script>
 
     <style type="text/css">
@@ -119,15 +119,16 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                   <option value="fsi" class="ioo">  SDSS-I (AB system)    </option>
                   <option value="fsz" class="ioo">  SDSS-Z (AB system)    </option>
                   <!--<option value="fjj" class="ioi">  J (IO:I)   </option>-->
-                  <option value="fhh" class="ioi">  H (Vega)   </option>
-                  <option value="frise" class="rise"> RISE V+R   </option>
+
+                  <option value="fhh" class="ioi">  H (Vega)  </option>
                   <option value="frise720" class="rise"> RISE 720nm </option>
+                  <option value="frise" class="rise"> RISE V+R (not available)  </option>
                   <option value="fringr" class="ringo">  RINGO3 Red 'd'  </option>
                   <option value="fringg" class="ringo">  RINGO3 Green 'f'  </option>
                   <option value="fringb" class="ringo">  RINGO3 Blue 'e'  </option>
                 </select>
               </td>
-              <td>Sky Brightness (mag/arcsec): </td>
+              <td>Sky Brightness: </td>
               <td>
                   <input type="text" name="skyText" class="constraintTextInput" id="skyText" value="0, 2, 4, 6, 8" onchange="calcimage();">
                 <input name="skySlid" id="skySlid" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
