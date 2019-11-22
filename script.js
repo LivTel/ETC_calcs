@@ -33,8 +33,6 @@ var hideSlider = function(id){
    $(id).hide();
 };
 
-
-
 var showHideTextSlider = function(plotMode){
    //Show all elements
    $('.slider').show();
@@ -58,3 +56,48 @@ var showHideTextSlider = function(plotMode){
   }
 
 };
+
+/*
+$(function()
+{
+
+   $('#spplotMode').change(function(){
+      spshowHideTextSlider($(this).val());
+   });
+   var defaultValue = $('#spplotMode').val();
+   spshowHideTextSlider(defaultValue);
+}
+);
+
+
+var hideSlider = function(id){
+   var $slider = $(id).siblings('.slider');
+   $slider.hide();
+   $(id).hide();
+};
+
+
+var spshowHideTextSlider = function(plotMode){
+   //Show all elements
+   $('.slider').show();
+   $('.spconstraintTextInput').show();
+   //Then Hide the unrequired required inputs
+   if (plotMode == 'spsnrMode') {
+      hideSlider('#spsnrSlid');
+      $('#spseeText').hide();
+      $('#spskyText').hide();
+
+  }
+   if (plotMode == 'spseeMode') {
+      $('#spsnrText').hide();
+      hideSlider('#seeSlid');
+      $('#spskyText').hide();
+  }
+   if (plotMode == 'skyMode') {
+      $('#spsnrText').hide();
+      $('#spseeText').hide();
+      hideSlider('#spskySlid');
+  }
+
+};
+*/

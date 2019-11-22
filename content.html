@@ -147,7 +147,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           <td id="pulldn"> SNR: </td>
           <td>
             <input type="text" name="snrText" class="constraintTextInput" id="snrText" value="10, 25, 50, 100" onchange="calcimage();">
-            <input name="snrSlid" id="snrSlid" data-slider-id="ex1Slider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+            <input name="snrSlid" id="snrSlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
           </td>
 
           </tr>
@@ -165,8 +165,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             </td>
             <td id="pulldn"> Seeing (arcsec):</td>
             <td>
-              <input type="text" name="seeText" class="constraintTextInput" id="seeText" value="0.8, 1, 1.2, 1.4, 1.6" onchange="calcimage();">
-              <input name="seeSlid" id="seeSlid" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
+              <input type="text" name="seeText" class="constraintTextInput" id="seeText" value="0.8, 1, 1.2, 1.4, 1.6" onchange="calcspec();">
+              <input name="seeSlid" id="seeSlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
               </td>
             </tr>
             <tr>
@@ -193,7 +193,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               <td>Sky Brightness: </td>
               <td>
                   <input type="text" name="skyText" class="constraintTextInput" id="skyText" value="0, 2, 4, 6, 8" onchange="calcimage();">
-                <input name="skySlid" id="skySlid" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
+                <input name="skySlid" id="skySlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
          </table>
@@ -269,6 +269,17 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
          <table>
            <tr>
+              <td>
+              <td>
+              <td id="pulldn">Plot Mode: </td>
+              <td>
+               <select name="spplotMode" id="spplotMode"  width="180" style="width: 180px" value="spseeMode" onchange="calcspec();">
+                 <option value="spsnrMode">SNR</option>
+                 <option value="spseeMode" selected="selected">Seeing</option>
+                 <option value="spskyMode">Sky Brightness</option>
+               </select>
+           </tr>
+           <tr>
                <td id="pulldn">Instrument: </td>
                <td>
                  <select name="spectrometer" id="spinstrum"  width="260" style="width: 260px" onchange="calcspec();">
@@ -277,8 +288,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                  </select>
                </td>
                <td id="pulldn"> SNR: </td>
-              <td>
-               <input id="spsnr" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
+               <td>
+                 <input type="text" name="spsnrText" class="spconstraintTextInput" id="spsnrText" value="10, 25, 50, 100" onchange="calcspec();">
+                 <input id="spsnrSlid" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
                </td>
            </tr>
            <tr>
@@ -292,8 +304,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td id="pulldn"> Seeing (arcsec): </td>
               <td>
-                 <input id="spseeing" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcspec();"/>
-                 </td>
+                <input type="text" name="spseeText" class="spconstraintTextInput" id="spseeText" value="0.8, 1.2, 1.6" onchange="calcspec();">
+                 <input id="spseeSlid" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcspec();"/>
+              </td>
            </tr>
            <tr>
               <td id="pulldn">Spectrometer arm: </td>
@@ -309,7 +322,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness: </td>
               <td>
-                <input id="spsky" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
+                <input type="text" name="spskyText" class="spconstraintTextInput" id="spskyText" value="0, 2, 4, 6, 8" onchange="calcspec();">
+                <input id="spskySlid" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
               </td>
             </tr>
            </tr>
@@ -384,19 +398,19 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
       });
 
-      var slider4 = new Slider("#spseeing", {
+      var slider4 = new Slider("#spseeSlid", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider5 = new Slider("#spsnr", {
+      var slider5 = new Slider("#spsnrSlid", {
         formatter: function(value) {
             return value;
           }
       });
 
-      var slider6 = new Slider("#spsky", {
+      var slider6 = new Slider("#spskySlid", {
         formatter: function(value) {
             return value;
           }
@@ -577,23 +591,23 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
 
           var calcLimMag = function(snr, seeing, sky){
-          var skymag = skybr - (skyoff * sky)
-          var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
-          var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin);
-          var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
-                                                                              //  - must multiply by areaofdisk since skymag
-                                                                              //    in mag/arcsec2
-          var a = expt * expt;
-          var b = -snr * snr * expt;
-          var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) +(readnoise * readnoise * numberofpixels));
-          var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation(+ve)
-          var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (ve)
-          var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
+            var skymag = skybr - (skyoff * sky)
+            var areaofdisk  = (seeing * 2 * seeing * 2);                         // area in arcsec
+            var numberofpixels = areaofdisk / (pixscale * pixscale * bin * bin);
+            var skyphotons  = Math.pow(10.0,((zp - skymag)/2.5)) * areaofdisk;   // within aperture
+                                                                                //  - must multiply by areaofdisk since skymag
+                                                                                //    in mag/arcsec2
+            var a = expt * expt;
+            var b = -snr * snr * expt;
+            var c = -snr * snr * ((skyphotons * expt) + (darkcurrent * expt *numberofpixels) +(readnoise * readnoise * numberofpixels));
+            var starphotonsa = (-b + Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation(+ve)
+            var starphotonsb = (-b - Math.sqrt(b*b - 4*a*c))/(2*a);     // solvequadratic equation (ve)
+            var starphotons = Math.max(starphotonsa, starphotonsb);     // Selecthighest value.
 
-               // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
-          limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
-          dataLine.push(limMag);
-         }
+                 // Calculate the inst zeropoint offset (this should be out of the loop for improved performance!)
+            limMag = -2.5 * Math.log10(starphotons) + zp;        // Calculate thelimiting magnitude
+            dataLine.push(limMag);
+          }
 
             var expt = 0;  // initial exposure time
             for (var i = 1; i <= exptmax; i+=exptmax/400) {
@@ -654,12 +668,16 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var spinstrum = document.getElementById("spinstrum").value;
           var spslit = document.getElementById("spslit").value;
           var sparm = document.getElementById("sparm").value;
-          var spseeing = +document.getElementById("spseeing").value;
-          var spsnr = +document.getElementById("spsnr").value;
-          var spsky = +document.getElementById("spsky").value;
+          var spseeing = +document.getElementById("spseeSlid").value;
+          var spseeText = document.getElementById("spseeText").value;
+          var spsnr = +document.getElementById("spsnrSlid").value;
+          var spsnrText = document.getElementById("spsnrText").value;
+          var spsky = +document.getElementById("spskySlid").value;
+          var spskyText = document.getElementById("spskyText").value;
           var spmagmin = document.getElementById("spmagmin").value;
           var spmagmax = document.getElementById("spmagmax").value;
           var spexptmax = document.getElementById("spexptmax").value;
+          var spplotMode = document.getElementById("spplotMode").value;
 
           // FIRST PULL-DOWN ***
           // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
@@ -744,45 +762,88 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           // Output values stored in a 1-D variable
 
           var spdata = new google.visualization.DataTable();
-          spdata.addColumn('number', 'Seeing Value');
-          spdata.addColumn('number', 'Limiting Magnitude');
+          spdata.addColumn('number', 'Exposure Time');
+          plotModeValues = []
+          console.log(spplotMode)
+          if (spplotMode == 'spsnrMode'){
+            console.log('HERE')
+            plotModeValues = spsnrText.split(",").map(Number).sort()
+            plotModeValues.forEach(function(snr){
+               spdata.addColumn('number', 'SNR = ' + snr.toFixed())
+             }
+          );
+          }
 
+          if (spplotMode == 'spseeMode'){
+            plotModeValues = spseeText.split(",").map(Number).sort()
+            plotModeValues.forEach(function(see){
+               spdata.addColumn('number', see.toFixed(1) + ' arcsec')
+             }
+          );
+          }
 
+          if (spplotMode == 'spskyMode'){
+             plotModeValues = spskyText.split(",").map(Number).sort()
+             plotModeValues.forEach(function(sky){
+                spdata.addColumn('number', 'DARK + ' + sky.toFixed(1) + ' mag/arcsec^2')
+          });
+       }
 
+          var calcLimMag = function(spsnr, spseeing, spsky){
+            var spskymag = spskybr - (spskyoff * spsky);  //
+            var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
+            var spatialarea = (slitwd * spseeing * 2) / (sppixscale * sppixscale) ;  // area on sky, in pixels
+            var specpixsc   = (refwav) / (spres * wvpixscale) ;                  // spec resolution, in pixels
+            var spnumberofpixels = spatialarea * specpixsc ;  // number of pixels per spat/spect resln element
 
-          var spskymag = spskybr - (spskyoff * spsky);  //
-          var spexpt = 0;
+            //NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
+            var spskyphotons  = (Math.pow(10.0,((spzp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
+                          // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
+                          // resolution element (really electrons/res elem):
+                          //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
+                          //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
+            var spa = spexpt * spexpt;
+            var spb = -spsnr * spsnr * spexpt;
+            var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise *spreadnoise * spnumberofpixels));
+            var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
+            var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
+            var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
+        // Calulate the inst zeropoint offset (this should be out of the loop for improved performance!)
+            var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spzp;        // Calculate the limiting magnitude
+            spdataLine.push(splimMag);                                    // Add to list
+          }
 
+           var spexpt = 0;
            for (var si = 1; si <= spexptmax; si+=spexptmax/200) {
                var spexpt = spexpt + (si) ;           // same as for imaging - step through seeing in arcsec
                var spdataLine = [spexpt]  // Create the list for the dataline with seeing value
-               var spatialarcs = (slitwd * spseeing * 2) ;                              // area on sky, in arcsec
-               var spatialarea = (slitwd * spseeing * 2) / (sppixscale * sppixscale) ;  // area on sky, in pixels
-               var specpixsc   = (refwav) / (spres * wvpixscale) ;                  // spec resolution, in pixels
-               var spnumberofpixels = spatialarea * specpixsc ;  // number of pixels per spat/spect resln element
 
-               //NOTE: spzp is ZP (in mags) that gives 1 photon/sec/Angstrom
-               var spskyphotons  = (Math.pow(10.0,((spzp - spskymag)/2.5)) * (refwav/spres) * spatialarcs);
-                             // spstarphotons and spskyphotons should be in units of photons per spatial/spectral
-                             // resolution element (really electrons/res elem):
-                             //  - multiplying by  (refwav/spres) convert from "per Angstrom" to "per res element"
-                             //  - multiplying by   spatialarcs   corrects spskyphotons for the "per arcsec"
-               var spa = spexpt * spexpt;
-               var spb = -spsnr * spsnr * spexpt;
-               var spc = -spsnr * spsnr * ((spskyphotons * spexpt) + (spdarkcurrent * spexpt * spnumberofpixels) + (spreadnoise *spreadnoise * spnumberofpixels));
-               var spstarphotonsa = (-spb + Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (+ve)
-               var spstarphotonsb = (-spb - Math.sqrt(spb*spb - 4*spa*spc))/(2*spa);     // solve quadratic equation (-ve)
-               var spstarphotons = Math.max(spstarphotonsa, spstarphotonsb);
-           // Calulate the inst zeropoint offset (this should be out of the loop for improved performance!)
-               var splimMag = -2.5 * Math.log10(spstarphotons / (refwav/spres)) + spzp;        // Calculate the limiting magnitude
-               spdataLine.push(splimMag);                                    // Add to list
+               if (spplotMode == 'spsnrMode'){
+                  plotModeValues.forEach(function(spsnr){
+                     calcLimMag(spsnr, spseeing, spsky);
+                  });
+               }
+
+               if (spplotMode == 'spseeMode'){
+                  plotModeValues.forEach(function(spseeing){
+                     calcLimMag(spsnr, spseeing, spsky);
+                  });
+               }
+
+               if (spplotMode == 'spskyMode'){
+                  plotModeValues.forEach(function(spsky){
+                     calcLimMag(spsnr, spseeing, spsky);
+                  });
+               }
+
+
                spdata.addRow(spdataLine);
             }
 
             var spoptions = {
               title: 'Exposure Time Calculator - Spectroscopy',
               curveType: 'function',
-              legend: 'none',
+              legend: { position: 'right' },
               hAxis: {
                 title: "Exposure time (s)",
                 viewWindow: {
