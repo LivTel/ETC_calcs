@@ -25,7 +25,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
 
 <html>
-  <title>The Liverpool Telescope Instruments : Limiting magnitude calculator for different telesope apertures</title>
+  <title>The Liverpool Telescope Instruments : Exposure Time Calculator</title>
   <body>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -45,13 +45,75 @@ Previous versions of the Exposure time calulutaor on which this was built were;
     width: 80px;}
    }
     </style>
+<h1> Liverpool Telescope<br>Exposure Time Calculator </h1>
+
+<!-- ................................................. -->
+<!-- IMAGING ......................................... -->
+<!-- ................................................. -->
+
+<h2>Imaging </h2>
+
+<br>
+<p>To use the Exposure Time Calculator (ETC), simply select an
+   <i>Instrument</i> with a corresponding <i>Binning</i> (usually 2x2)
+   and <i>Filter</i> from the pull-down menus.  The <i>Plot Mode</i>
+   option is used to select whether the plot shows multiple <i>Signal to
+   Noise Ratios</i> (SNR), <i>Seeing Values</i> (FWHM) or <i>Sky Brightnesses</i>.
+   The comma separated list can be modified to the desired values.
+</p>
+
+<p><u>IMPORTANT NOTES:</u></p>
+
+<ul>
+    <li><b>Mirror Reflectivity: </b> The zero points are derived with clean mirror coatings.
+        Mirror reflectivity will naturally degrade over time. The IO:O ZP (two reflections)
+        is measured to decline at a rate of 0.15mag per year. Other instruments (three reflections) are likely
+        to decline slightly faster than that. The most recent mirror coating was Sept 2019.</li>
+    <li><b>Binning: </b> We <i>strongly recommend</i> using 2x2 binning with both
+        IO:O and RISE. Note that we do not routinely obtain un-binned flats
+        for either of these instruments. Please contact us
+        if you plan on taking un-binned data.</li>
+    <li><b>Minimum Exposure Times: </b> Exposure times as low as 1 second may be
+        quoted by the ETC for
+        <a href="https://telescope.livjm.ac.uk/TelInst/Inst/IOO/">IO:O</a> and
+        <a href="https://telescope.livjm.ac.uk/TelInst/Inst/IOI/">IO:I</a>. However, due to shutter
+        effects a minimum exposure time of at least 10 seconds is strongly
+        recommended for IO:O; shorter exposures are unlikely to produce photometric
+        accuracies of less than 1%.  Please refer to the IO:I webpage for information
+        on exposure times with this instrument. </li>
+    <li><b>RINGO3: </b>  The RINGO3 exposure time corresponds to the
+        duration of the observing group; eight exposures will be obtained each
+        second/per rotation cycle. The values quoted assume a constant gain and are most
+        accurate for "few second" exposure durations.  For a more accurate estimate,
+        and for details on how to convert SNR to polarisation accuracy, see the
+        RINGO3 instrument web-page.
+    </li>
+</ul>
+
+<br><p>
+<p>
+    Dark+10 mag corresponds to civil twilight (sun altitude < -4 degs),
+    Dark+6 mag to nautical twilight (sun altitude between -8 and -12 degs).
+    Roughly speaking, Dark+4 corresponds to observing >30 deg from a full moon;
+    Dark+2 to observing >30 deg from a 65% illuminated moon. We have assumed that
+    the moon has no affect on J and H-band imaging. </p>
+
+<p> For further information on Sky Brightness and its relation to twilight, moon phase
+    and moon distance, see our
+    <a href="https://telescope.livjm.ac.uk/PropInst/Phase2/?sf=SkyBrightness">
+       Sky Brightness
+    </a> web-page.
+    See also the ING web-site on
+    <a href="http://www.ing.iac.es/Astronomy/observing/conditions/skybr/skybr.html">
+        La Palma Night-Sky Brightness
+    </a>.
+</p>
+<p> If you have any problems with or questions about this ETC, please don't hesitate to
+    <a href="https://telescope.livjm.ac.uk/Contact/"> contact us</a>.
+</p>
 
 
     <center>
-
-      <br><br>
-      <p> </p>
-
 
 
       <div id="curve_chart" style="width: 1000px; height: 600px" class="column"></div>
@@ -153,9 +215,56 @@ Previous versions of the Exposure time calulutaor on which this was built were;
         </table>
 
 
-
+      </center>
          <br><br>
 
+         <h2>Spectroscopy </h2>
+
+         <br>
+         <p>To use the Exposure Time Calculator (ETC), simply select an <i>Instrument</i>,
+            a corresponding <i>Slit</i> (the IFU must be used for FRODOspec), and a
+            <i>Spectrometer arm</i> - red or blue - depending on the wavelength
+            region you are interested in. Note the difference between the
+            higher-resolution VPH gratings and the lower-resolution gratings in
+            FRODOSpec.  Then enter the <i>Apparent Magnitude</i> (B or V band
+            should work best) of your target, along with the desired
+            <i>Signal-to-Noise Ratio</i> (SNR) per resolution element in the continuum,
+            and click on <i>Calculate</i>.  The resulting table shows exposure times for
+            different sky brightnesses above the darkest sky and for different
+            seeing (FWHM) for point sources.
+         </p>
+
+         <p><u>IMPORTANT NOTES:</u></p>
+
+         <ul>
+             <li><b>Mirror Reflectivity: </b> The zero points are derived with clean mirror coatings.
+                 Mirror reflectivity will naturally degrade over time. The IO:O ZP (two reflections)
+                 is measured to decline at a rate of 0.15mag per year. Other instruments (three reflections) are likely
+                 to decline slightly faster than that. The most recent mirror coating was Sept 2019.</li>
+             <li><b>Red and Blue wavelengths: </b> the exposure times listed below are
+             calculated close to the peak transmission of each arm/wavelength region,
+             corresponding to 450 nm and 700 nm in the blue and red, respectively. </li>
+             <li><b>SPRAT: </b> this version of the ETC does not take into account slit
+            losses with SPRAT; nor does it correct for the colour of a source. </li>
+         </ul>
+
+         <p>
+             Dark+10 mag corresponds to civil twilight (sun altitude < -4 degs),
+             Dark+6 mag to nautical twilight (sun altitude between -8 and -12 degs).
+             Roughly speaking, Dark+4 corresponds to observing >30 deg from a full moon;
+             Dark+2 to observing >30 deg from a 65% illuminated moon.
+            For further information on Sky Brightness and its relation to twilight, moon
+            phase and moon distance, see our
+         <a href="https://telescope.livjm.ac.uk/PropInst/Phase2/?sf=SkyBrightness">
+             Sky Brightness</a> webpage.
+         </p>
+
+         <p> If you have any problems with or questions about this ETC, please don't
+             hesitate to
+             <a href="https://telescope.livjm.ac.uk/Contact/"> contact us</a>.
+         </p>
+
+       <center>
          <div id="spcurve_chart" style="width: 1000px; height: 600px"></div>
 
          <table>
@@ -223,7 +332,10 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
          </table>
 
+<br><br>
 
+
+<br><hr>
 
 
 
