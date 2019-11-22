@@ -124,8 +124,10 @@ Previous versions of the Exposure time calulutaor on which this was built were;
       <table>
 
         <tr>
+           <td id="pulldn">Log x-Axis: </td>
            <td>
-           <td>
+                  <input type="radio" name="logModeRadio" id="logModeOff" value="" checked onchange="calcimage();"/>Off</>
+                  <input type="radio" name="logModeRadio" id="logModeOn" value="log" onchange="calcimage();">On</></td>
            <td id="pulldn">Plot Mode: </td>
            <td>
             <select name="plotMode" id="plotMode"  width="180" style="width: 180px" value="seeMode" onchange="calcimage();">
@@ -202,11 +204,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
               <td>Magnitude Min</td>
               <td>
-                <input id="magmin" size="4" type="number" value=16 min=0 max=16 onchange="calcimage();">
+                <input id="magmin" size="4" type="number" value=16 onchange="calcimage();">
              </td>
              <td>Magnitude Max</td>
              <td>
-               <input id="magmax" size="4" type="number" value=22 min=22 max=30 onchange="calcimage();">
+               <input id="magmax" size="4" type="number" value=22 onchange="calcimage();">
              </td>
              <td>Exposure Time Max</td>
              <td>
@@ -269,8 +271,10 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
          <table>
            <tr>
-              <td>
-              <td>
+             <td id="pulldn">Log x-Axis: </td>
+             <td>
+                  <input type="radio" name="splogModeRadio" id="splogModeOff" value="" checked onchange="calcspec();"/>Off</>
+                  <input type="radio" name="splogModeRadio" id="splogModeOn" value="log" onchange="calcspec();">On</></td>
               <td id="pulldn">Plot Mode: </td>
               <td>
                <select name="spplotMode" id="spplotMode"  width="180" style="width: 180px" value="spseeMode" onchange="calcspec();">
@@ -333,11 +337,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
            <tr>
                <td>Magnitude Min</td>
                <td>
-                 <input id="spmagmin" size="4" type="number" value=12 min=0 max=12 onchange="calcspec();">
+                 <input id="spmagmin" size="4" type="number" value=12 onchange="calcspec();">
              </td>
              <td>Magnitude Max</td>
              <td>
-                <input id="spmagmax" size="4" type="number" value=20 min=20 max=30 onchange="calcspec();">
+                <input id="spmagmax" size="4" type="number" value=20 onchange="calcspec();">
              </td>
              <td>Exposure Time Max</td>
              <td>
@@ -433,6 +437,15 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var magmax = document.getElementById("magmax").value;
           var exptmax = document.getElementById("exptmax").value;
           var plotMode = document.getElementById("plotMode").value;
+
+          if (document.getElementById('logModeOn').checked) {
+             var logMode = 'log'
+          } else {
+             var logMode = ''
+          }
+
+
+          console.log(logMode)
 
 
           // FIRST PULL-DOWN ***
@@ -643,10 +656,12 @@ Previous versions of the Exposure time calulutaor on which this was built were;
             legend: { position: 'right' },
             hAxis: {
               title: "Exposure time (s)",
+              scaleType: logMode,
               viewWindow: {
                 min: 0,
                 max: exptmax
               }
+
             },
             vAxis: {
               title: "Limiting Magnitude",
@@ -678,6 +693,12 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           var spmagmax = document.getElementById("spmagmax").value;
           var spexptmax = document.getElementById("spexptmax").value;
           var spplotMode = document.getElementById("spplotMode").value;
+
+          if (document.getElementById('splogModeOn').checked) {
+             var splogMode = 'log'
+          } else {
+             var splogMode = ''
+          }
 
           // FIRST PULL-DOWN ***
           // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
@@ -846,6 +867,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               legend: { position: 'right' },
               hAxis: {
                 title: "Exposure time (s)",
+                scaleType: splogMode,
                 viewWindow: {
                   min: 0,
                   max: spexptmax
