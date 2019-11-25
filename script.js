@@ -1,3 +1,4 @@
+
 // Add your javascript here
 $(function(){
  $("#binn").chained("#instrum");
@@ -18,7 +19,6 @@ $(function(){
 
 $(function()
 {
-
    $('#plotMode').change(function(){
       showHideTextSlider($(this).val());
    });
@@ -27,22 +27,35 @@ $(function()
 }
 );
 
+
+$(function()
+{
+   $('#spplotMode').change(function(){
+      showHideSpTextSlider($(this).val());
+   });
+   var defaultValue = $('#spplotMode').val();
+   showHideSpTextSlider(defaultValue);
+}
+);
+
+
 var hideSlider = function(id){
    var $slider = $(id).siblings('.slider');
    $slider.hide();
    $(id).hide();
 };
 
+
+
 var showHideTextSlider = function(plotMode){
    //Show all elements
-   $('.slider').show();
+   $('.slider#imSlider').show();
    $('.constraintTextInput').show();
    //Then Hide the unrequired required inputs
    if (plotMode == 'snrMode') {
       hideSlider('#snrSlid');
       $('#seeText').hide();
       $('#skyText').hide();
-
   }
    if (plotMode == 'seeMode') {
       $('#snrText').hide();
@@ -57,29 +70,10 @@ var showHideTextSlider = function(plotMode){
 
 };
 
-/*
-$(function()
-{
 
-   $('#spplotMode').change(function(){
-      spshowHideTextSlider($(this).val());
-   });
-   var defaultValue = $('#spplotMode').val();
-   spshowHideTextSlider(defaultValue);
-}
-);
-
-
-var hideSlider = function(id){
-   var $slider = $(id).siblings('.slider');
-   $slider.hide();
-   $(id).hide();
-};
-
-
-var spshowHideTextSlider = function(plotMode){
+var showHideSpTextSlider = function(plotMode){
    //Show all elements
-   $('.slider').show();
+   $('.slider#spSlider').show();
    $('.spconstraintTextInput').show();
    //Then Hide the unrequired required inputs
    if (plotMode == 'spsnrMode') {
@@ -90,14 +84,13 @@ var spshowHideTextSlider = function(plotMode){
   }
    if (plotMode == 'spseeMode') {
       $('#spsnrText').hide();
-      hideSlider('#seeSlid');
+      hideSlider('#spseeSlid');
       $('#spskyText').hide();
   }
-   if (plotMode == 'skyMode') {
+   if (plotMode == 'spskyMode') {
       $('#spsnrText').hide();
       $('#spseeText').hide();
       hideSlider('#spskySlid');
   }
 
 };
-*/

@@ -149,7 +149,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           <td id="pulldn"> SNR: </td>
           <td>
             <input type="text" name="snrText" class="constraintTextInput" id="snrText" value="10, 25, 50, 100" onchange="calcimage();">
-            <input name="snrSlid" id="snrSlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
+            <input name="snrSlid" id="snrSlid" data-slider-id="imSlider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcimage();"/>
           </td>
 
           </tr>
@@ -165,11 +165,11 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                 <option value="rgbin" class="ringo"> RINGO3 (unbinned) </option>
               </select>
             </td>
-            <td id="pulldn"> Seeing (arcsec):</td>
+            <td id="pulldn">Seeing (arcsec):</td>
             <td>
-              <input type="text" name="seeText" class="constraintTextInput" id="seeText" value="0.8, 1, 1.2, 1.4, 1.6" onchange="calcspec();">
-              <input name="seeSlid" id="seeSlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
-              </td>
+              <input type="text" name="seeText" class="constraintTextInput" id="seeText" value="0.8, 1, 1.2, 1.4, 1.6" onchange="calcimage();">
+              <input name="seeSlid" id="seeSlid" data-slider-id="imSlider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcimage();"/>
+            </td>
             </tr>
             <tr>
               <td id="pulldn">Filter: </td>
@@ -195,7 +195,7 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               <td>Sky Brightness: </td>
               <td>
                   <input type="text" name="skyText" class="constraintTextInput" id="skyText" value="0, 2, 4, 6, 8" onchange="calcimage();">
-                <input name="skySlid" id="skySlid" class="imslider" data-slider-id="ex1Slider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
+                <input name="skySlid" id="skySlid" data-slider-id="imSlider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcimage();"/>
               </td>
             </tr>
          </table>
@@ -292,10 +292,10 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                  </select>
                </td>
                <td id="pulldn"> SNR: </td>
-               <td>
-                 <input type="text" name="spsnrText" class="spconstraintTextInput" id="spsnrText" value="10, 25, 50, 100" onchange="calcspec();">
-                 <input id="spsnrSlid" data-slider-id='ex1Slider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
-               </td>
+              <td>
+                <input type="text" name="spsnrText" class="spconstraintTextInput" id="spsnrText" value="10, 25, 50, 100" onchange="calcspec();">
+                <input name="spsnrSlid" id="spsnrSlid" data-slider-id="spSlider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="50" onchange="calcspec();"/>
+              </td>
            </tr>
            <tr>
 
@@ -308,8 +308,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td id="pulldn"> Seeing (arcsec): </td>
               <td>
-                <input type="text" name="spseeText" class="spconstraintTextInput" id="spseeText" value="0.8, 1.2, 1.6" onchange="calcspec();">
-                 <input id="spseeSlid" data-slider-id='ex1Slider' type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcspec();"/>
+                <input type="text" name="spseeText" class="spconstraintTextInput" id="spseeText" value="0.8, 1, 1.2, 1.4, 1.6" onchange="calcspec();">
+                <input name="spseeSlid" id="spseeSlid" data-slider-id="spSlider" type="text" data-slider-min="0.6" data-slider-max="4.0" data-slider-step="0.2" data-slider-value="1.2" onchange="calcspec();"/>
               </td>
            </tr>
            <tr>
@@ -326,8 +326,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
               </td>
               <td>Sky Brightness: </td>
               <td>
-                <input type="text" name="spskyText" class="spconstraintTextInput" id="spskyText" value="0, 2, 4, 6, 8" onchange="calcspec();">
-                <input id="spskySlid" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
+                  <input type="text" name="spskyText" class="spconstraintTextInput" id="spskyText" value="0, 2, 4, 6, 8" onchange="calcspec();">
+                <input name="spskySlid" id="spskySlid" data-slider-id="spSlider" type="text" data-slider-min="0" data-slider-max="10" data-slider-step="0.5" data-slider-value="2" onchange="calcspec();"/>
               </td>
             </tr>
            </tr>
