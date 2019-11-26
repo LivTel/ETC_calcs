@@ -445,8 +445,6 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
 
 
-          console.log(logMode)
-
 
           // FIRST PULL-DOWN ***
           // Look-up tables of variables - INSTRUMENT CHARACTERISTICS
@@ -784,10 +782,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
 
           var spdata = new google.visualization.DataTable();
           spdata.addColumn('number', 'Exposure Time');
-          plotModeValues = []
-          console.log(spplotMode)
+          plotModeValues = [];
           if (spplotMode == 'spsnrMode'){
-            console.log('HERE')
             plotModeValues = spsnrText.split(",").map(Number).sort()
             plotModeValues.forEach(function(snr){
                spdata.addColumn('number', 'SNR = ' + snr.toFixed())
