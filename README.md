@@ -15,4 +15,13 @@ Basic Webpage source of the Exposure Time calculator (ETC) for the Liverpool Tel
 Modifications for the ETC should always be made and tested locally (not on telescope)
 
 * Clone the repository locally, make changes, test, commit and push back to github.
-* On telescope webserver copy the `script.js` and `content.html` files to the correct directory (i.e. `/var/www/html/TelInst/calc`) using standard wget commands.
+* On telescope webserver copy the `script.js` and `content.html` files to the correct directory (i.e. `/var/www/html/TelInst/calc`) using standard wget commands to the raw github files. First cp the active files to an old version.
+
+```shell
+cp content.html content_old.html
+cp script.js script_old.js
+wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/script.js
+wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/content.html
+```
+
+Once the deployment is tested and confirmed remove the old files to tidy up (they'll still be in the github repository should we need to roll back for any reason)
