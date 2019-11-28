@@ -19,7 +19,7 @@ Modifications for the ETC should always be made and tested locally (not on teles
 
 ```shell
 mv content.html content_old.html
-mv script.js etc_old.js
+mv etc.js etc_old.js
 wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/etc.js
 wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/content.html
 ```
