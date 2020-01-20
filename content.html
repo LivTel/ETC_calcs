@@ -617,8 +617,8 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
 
             var expt = 0;  // initial exposure time
-            for (var i = 1; i <= exptmax; i+=exptmax/400) {
-               var expt = expt + (i);
+            for (var i = 1; i <= exptmax; i+=exptmax/400.) {
+               var expt = i;
                var dataLine = [expt];
 
                if (plotMode == 'snrMode'){
@@ -827,8 +827,9 @@ Previous versions of the Exposure time calulutaor on which this was built were;
           }
 
            var spexpt = 0;
-           for (var si = 1; si <= spexptmax; si+=spexptmax/200) {
-               var spexpt = spexpt + (si) ;           // same as for imaging - step through seeing in arcsec
+           for (var si = 1; si <= spexptmax; si+=spexptmax/400.) {
+
+               var spexpt = si ;           // same as for imaging - step through seeing in arcsec
                var spdataLine = [spexpt]  // Create the list for the dataline with seeing value
 
                if (spplotMode == 'spsnrMode'){
@@ -848,7 +849,6 @@ Previous versions of the Exposure time calulutaor on which this was built were;
                      calcLimMag(spsnr, spseeing, spsky);
                   });
                }
-
 
                spdata.addRow(spdataLine);
             }
