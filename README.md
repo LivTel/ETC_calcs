@@ -10,6 +10,7 @@ Basic Webpage source of the Exposure Time calculator (ETC) for the Liverpool Tel
 ## Version 2 Calculator
 * Uses google charts to render a Expsoure Time vs Limiting magnitude plot
 * Uses 'Chained' to link allowed instrument / binning / filter / arm  options https://appelsiini.net/projects/chained/
+* This is now in the `jquery.chained.js` file and not loaded from appelsiini.net
 
 ## Deployment to Telescope webserver
 Modifications for the ETC should always be made and tested locally (not on telescope)
@@ -22,6 +23,7 @@ mv content.html content_old.html
 mv etc.js etc_old.js
 wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/etc.js
 wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/content.html
+wget https://raw.githubusercontent.com/LivTel/ETC_calcs/master/jquery.chained.js
 ```
 
 Once the deployment is tested and confirmed remove the old files to tidy up (they'll still be in the github repository should we need to roll back for any reason)
